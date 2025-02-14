@@ -8,7 +8,7 @@ const UserWorkHistorySchema = new mongoose.Schema(
     workplace: { type: String, required: true },
     workplace_type: { type: String, required: true },
     workplace_city: { type: String, required: true },
-    workplace_postal_code: { type: String, required: true }, // Fixed data type
+    workplace_postalcode: { type: String, required: true }, // Fixed data type
     designation: { type: String, required: true },
 
   },

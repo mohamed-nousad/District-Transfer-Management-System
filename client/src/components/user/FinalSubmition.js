@@ -10,6 +10,8 @@ const FinalSubmissionPage = ({ userData }) => {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const navigate = useNavigate();
 
+  const id = userData.id ?? id;
+
   const handleTermsChange = (e) => {
     setTermsAccepted(e.target.checked);
   };
@@ -28,7 +30,7 @@ const FinalSubmissionPage = ({ userData }) => {
 
       // Send the update request to backend
       const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/user/user/${userData.id}`, // User ID in the URL
+        `${process.env.REACT_APP_API_URL}/user/user/${id}`, // User ID in the URL
         updatedData
       );
 

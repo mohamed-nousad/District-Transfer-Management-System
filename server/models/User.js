@@ -17,7 +17,7 @@ const UserSchema = new mongoose.Schema(
     first_appointment_date: { type: Date, default: null },
     duty_assumed_date: { type: Date, default: null },
     workplace: { type: String, default: null },
-    postal_code: { type: String, default: null },
+    workplace_postalcode: { type: String, default: null },
     designation: { type: String, default: null },
     current_workplace: { type: String, default: null },
     service: { type: String, default: null },

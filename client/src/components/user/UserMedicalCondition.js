@@ -18,7 +18,9 @@ const UserMedicalCondition = ({ userData }) => {
         { ...values, userId: userData.id }, // Include userId
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      message.success(response.data.message || "Medicalcondition added successfully");
+      message.success(
+        response.data.message || "Medicalcondition added successfully"
+      );
       form.resetFields();
     } catch (error) {
       message.error(error.response?.data?.error || "Something went wrong");

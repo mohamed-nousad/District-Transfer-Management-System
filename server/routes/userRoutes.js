@@ -11,12 +11,12 @@ const UserWorkHistoryController = require("../controllers/user/UserWorkHistoryCo
 const router = express.Router();
 
 router.get(
-  "/user-progress/:id",
+  "/user/progress/:id",
   UserController.validateUser,
   UserController.getUserProfileProgress
 );
 router.put(
-  "/user-progress/:id",
+  "/user/progress/:id",
   UserController.validateUser,
   UserController.updateProfileProgress
 );

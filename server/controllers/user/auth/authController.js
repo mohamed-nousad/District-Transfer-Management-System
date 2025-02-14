@@ -91,7 +91,7 @@ const loginUser = async (req, res) => {
         NIC: user.NIC,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1m" } // Adjust expiration time
+      { expiresIn: "1h" } // Adjust expiration time
     );
 
     res.status(200).json({

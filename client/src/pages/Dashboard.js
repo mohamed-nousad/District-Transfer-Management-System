@@ -1,5 +1,6 @@
-import React from "react";
-import { Button, Layout, Progress, Typography, Spin } from "antd";
+import React, { useState, useEffect } from "react";
+import { Button, Layout, Progress, Typography, Spin, message } from "antd";
+import axios from "axios";
 import useCheckUserAuth from "../utils/checkUserAuth";
 
 const { Content } = Layout;
@@ -7,7 +8,28 @@ const { Title, Text } = Typography;
 
 const Dashboard = () => {
   const { userData, loading } = useCheckUserAuth();
-  const profileCompletion = 72; // Dynamically update based on user profile
+  const [profileCompletion, setProfileCompletion] = useState(0);
+
+  useEffect(() => {
+    if (userData) {
+      axios
+        .get(`${process.env.REACT_APP_API_URL}/user/user/progress/${userData.id}`)
+        .then((response) => setProfileCompletion(response.data.progress))
+        .catch(() => message.error("Failed to fetch progress"));
+    }
+  }, [userData]);
+
+  const handleRefresh = () => {
+    if (userData) {
+      axios
+        .put(`${process.env.REACT_APP_API_URL}/user/user/progress/${userData.id}`, { progressValue: profileCompletion })
+        .then((response) => {
+          setProfileCompletion(response.data.progress);
+          message.success("Progress updated!");
+        })
+        .catch(() => message.error("Failed to update progress"));
+    }
+  };
 
   if (loading)
     return (
@@ -19,11 +41,7 @@ const Dashboard = () => {
           height: "80vh",
         }}
       >
-        <Spin
-          size="large"
-          tip="Loading..."
-          style={{ fontSize: "24px", transform: "scale(2)" }} // Enlarges the spinner
-        />
+        <Spin size="large" tip="Loading..." />
       </div>
     );
 
@@ -39,29 +57,38 @@ const Dashboard = () => {
       {userData ? (
         <div style={{ color: "black", margin: 40 }}>
           <Title level={2}>
-            Welcome, {userData.nameWithInitial || "User"} {userData.lastName || ""}!
+            Welcome, {userData.nameWithInitial || "User"} {userData.lastName || ""}
           </Title>
-          <br />
           <Text>{userData.NIC}</Text>
         </div>
       ) : (
         <Title level={2}>Welcome, User!</Title>
       )}
-        <Title level={3}>Profile progress</Title>
+
+      <Title level={3}>Profile Progress</Title>
 
       <Progress
         percent={profileCompletion}
-        status="active"
+        status={profileCompletion === 100 ? "success" : "active"}
         showInfo={false}
-        strokeColor="#4CAF50"
+        strokeColor={profileCompletion === 100 ? "#4CAF50" : "#FF8C00"}
         style={{ width: "80%", margin: "20px auto" }}
       />
+      <Text>{profileCompletion}%</Text>
 
-      <Text> {profileCompletion}% </Text>
+      {profileCompletion === 100 && (
+        <span style={{ color: "#4CAF50", fontWeight: "bold", marginLeft: "10px" }}>
+          Completed with Verified Badge
+        </span>
+      )}
 
       <div style={{ marginTop: "20px" }}>
-        <Button type="primary" style={{ marginBottom: "10px", width: "250px" }}>
-          Add Transfer Request
+        <Button
+          type="primary"
+          style={{ marginBottom: "10px", width: "250px" }}
+          onClick={handleRefresh}
+        >
+          Refresh Progress
         </Button>
         <br />
         <Button type="default" style={{ width: "250px" }}>

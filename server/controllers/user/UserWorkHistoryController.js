@@ -6,7 +6,11 @@ exports.validateWorkHistory = [
   check("start_date").notEmpty().withMessage("Start date is required"),
   check("end_date").optional().isISO8601().withMessage("Invalid date format"),
   check("workplace").notEmpty().withMessage("Workplace is required"),
+  check("workplace_type").notEmpty().withMessage("Workplace type is required"),
   check("workplace_city").notEmpty().withMessage("Workplace city is required"),
+  check("workplace_postalcode")
+    .notEmpty()
+    .withMessage("Workplace postalcode is required"),
   check("designation").notEmpty().withMessage("Designation is required"),
 ];
 

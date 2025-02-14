@@ -11,7 +11,7 @@ const useCheckUserAuth = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (!token || token.split(".").length !== 3) {
+    if (!token || token.split(".").length !== 3 || token == null) {
       localStorage.removeItem("token");
       alert("Access denied!");
       navigate("/login");

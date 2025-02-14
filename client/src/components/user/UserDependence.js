@@ -108,48 +108,6 @@ const Dependence = ({ userData }) => {
             <Input />
           </Form.Item>
 
-          {/* Workplace Type */}
-          <Form.Item
-            label="Workplace Type"
-            name="workplace_type"
-            style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
-          >
-            <Select>
-              <Option value="mental">Mental</Option>
-              <Option value="visual">Visual</Option>
-              <Option value="psychological">Psychological</Option>
-            </Select>
-          </Form.Item>
-
-          {/* Workplace City */}
-          <Form.Item
-            label="Workplace City"
-            name="workplace_city"
-            style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
-          >
-            <Select>
-              <Option value="mental">Mental</Option>
-              <Option value="visual">Visual</Option>
-              <Option value="psychological">Psychological</Option>
-            </Select>
-          </Form.Item>
-
-          {/* Workplace Postal Code */}
-          <Form.Item
-            label="Workplace Postal Code"
-            name="workplace_postal_code"
-            style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
-          >
-            <Select>
-              <Option value="mental">Mental</Option>
-              <Option value="visual">Visual</Option>
-              <Option value="psychological">Psychological</Option>
-            </Select>
-          </Form.Item>
-
           <Form.Item
             label="City"
             name="city"
