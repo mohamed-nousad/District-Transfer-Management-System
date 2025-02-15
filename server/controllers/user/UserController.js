@@ -36,11 +36,7 @@ exports.validateUserUpdate = [
     .notEmpty()
     .withMessage("Duty assumed date is required"),
   check("workplace").notEmpty().withMessage("Workplace is required"),
-  check("postal_code").notEmpty().withMessage("Postal code is required"),
   check("designation").notEmpty().withMessage("Designation is required"),
-  check("current_workplace")
-    .notEmpty()
-    .withMessage("Current workplace is required"),
   check("service").notEmpty().withMessage("Service is required"),
   check("class").notEmpty().withMessage("Class is required"),
   check("city").notEmpty().withMessage("City is required"),
@@ -70,37 +66,45 @@ exports.getUserProfileProgress = async (req, res) => {
 exports.updateProfileProgress = async (req, res) => {
   const userId = req.params.id; // Get userId from the route parameter
 
-  const user = await User.findById(userId); // Get the user object
-
+  const user = await User.findById(userId);
   if (!user) {
-    throw new Error("User not found");
+    return res.status(404).json({ message: "User not found" });
   }
 
-  // Initialize progress counter
-  let progress = 0;
-  const totalCollections = 6; // 6 collections (including approval)
-  const progressPerCollection = 13; // Each collection contributes 13% (6*13 = 78%)
+  let progress = 15; // Default progress value
 
-  // Query all related collections
-  const UserDependence = await UserDependence.findOne({ user_Id: user._id });
-  const UserDisability = await UserDisability.findOne({ user_Id: user._id });
-  const UserDisease = await UserDisease.findOne({ user_Id: user._id });
-  const UserMedicalCondition = await UserMedicalCondition.findOne({
-    user_Id: user._id,
-  });
-  const UserWorkHistory = await UserWorkHistory.findOne({ user_Id: user._id });
+  const collections = [
+    UserDependence,
+    UserDisability,
+    UserDisease,
+    UserMedicalCondition,
+    UserWorkHistory,
+  ];
 
-  // Check which collections have data and add progress
-  if (UserDependence) progress += progressPerCollection;
-  if (UserDisability) progress += progressPerCollection;
-  if (UserDisease) progress += progressPerCollection;
-  if (UserMedicalCondition) progress += progressPerCollection;
-  if (UserWorkHistory) progress += progressPerCollection;
+  let completedCount = 0;
+
+  // Count completed collections
+  for (const Collection of collections) {
+    const data = await Collection.findOne({ userId: user._id });
+    if (data) completedCount++;
+  }
+
+  // Add 15 for each completed collection
+  progress += completedCount * 15;
+
+  // Add 10 if user is approved
+  if (
+    user.isSubmited &&
+    user.isChecked &&
+    user.isRecommended &&
+    user.isApproved
+  )
+    progress += 10;
 
   // Update user's progress value
   await User.findByIdAndUpdate(userId, { progressValue: progress });
 
-  return progress; // Return the calculated progress value
+  res.json({ message: "Profile updated successfully", progress });
 };
 
 // Get  User using id

@@ -4,7 +4,7 @@ import { Form, Select, Input, Button, message, Spin } from "antd";
 
 const { Option } = Select;
 
-const UserDisability = ({ userData }) => {
+const UserDisability = ({ userData , user}) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [showYears, setShowYears] = useState(false);

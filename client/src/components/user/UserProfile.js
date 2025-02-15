@@ -11,8 +11,6 @@ const UserProfile = ({ userData }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // const id = userData.id || id;
-
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -221,74 +219,6 @@ const UserProfile = ({ userData }) => {
               </Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            label="Workplace Postalcode"
-            name="workplace_postalcode"
-            style={{ flex: "1 1 48%" }}
-          >
-            <Select>
-              <Option value="32000">
-                32000 - District Secretariat, Ampara
-              </Option>
-              <Option value="32000">
-                32000 - Divisional Secretariat, Ampara
-              </Option>
-              <Option value="32010">
-                32010 - Divisional Secretariat, Dehiaththakandiya
-              </Option>
-              <Option value="32020">
-                32020 - Divisional Secretariat, Alayadivembu
-              </Option>
-              <Option value="32030">
-                32030 - Divisional Secretariat, Uhana
-              </Option>
-              <Option value="32040">
-                32040 - Divisional Secretariat, Mahaoya
-              </Option>
-              <Option value="32050">
-                32050 - Divisional Secretariat, Padiyathalawa
-              </Option>
-              <Option value="32060">
-                32060 - Divisional Secretariat, Damana
-              </Option>
-              <Option value="32070">
-                32070 - Divisional Secretariat, Lahugala
-              </Option>
-              <Option value="32080">
-                32080 - Divisional Secretariat, Irakkamam
-              </Option>
-              <Option value="32090">
-                32090 - Divisional Secretariat, Sammanthurai
-              </Option>
-              <Option value="32100">
-                32100 - Divisional Secretariat, Sainthamaruthu
-              </Option>
-              <Option value="32110">
-                32110 - Divisional Secretariat, Ninthavur
-              </Option>
-              <Option value="32120">
-                32120 - Divisional Secretariat, Addalachchenai
-              </Option>
-              <Option value="32130">
-                32130 - Divisional Secretariat, Akkaraipaththu
-              </Option>
-              <Option value="32140">
-                32140 - Divisional Secretariat, Thirukkovil
-              </Option>
-              <Option value="32150">
-                32150 - Divisional Secretariat, Pothuvil
-              </Option>
-              <Option value="32160">
-                32160 - Divisional Secretariat, Kalmunai (Muslim)
-              </Option>
-              <Option value="32170">
-                32170 - Divisional Secretariat, Kalmunai (Tamil)
-              </Option>
-              <Option value="32180">
-                32180 - Divisional Secretariat, Karathivu
-              </Option>
-            </Select>
-          </Form.Item>
         </div>
 
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
@@ -320,28 +250,6 @@ const UserProfile = ({ userData }) => {
           </Form.Item>
         </div>
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-          <Form.Item
-            label="Designation"
-            name="designation"
-            style={{ flex: "1 1 48%" }}
-          >
-            <Select>
-              <Option value="officer">Officer</Option>
-              <Option value="manager">Manager</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="Current Workplace"
-            name="current_workplace"
-            style={{ flex: "1 1 48%" }}
-          >
-            <Select>
-              <Option value="kalmunai">Kalmunai</Option>
-              <Option value="maruthamunai">Maruthamunai</Option>
-            </Select>
-          </Form.Item>
-        </div>
-        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
           <Form.Item label="Service" name="service" style={{ flex: "1 1 48%" }}>
             <Select>
               <Option value="1st service">1st service</Option>
@@ -356,7 +264,7 @@ const UserProfile = ({ userData }) => {
           </Form.Item>
         </div>
         <Button type="primary" htmlType="submit" block>
-          Save
+          Update
         </Button>
       </Form>
     </div>

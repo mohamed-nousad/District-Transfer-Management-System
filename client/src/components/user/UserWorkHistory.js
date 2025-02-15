@@ -4,7 +4,7 @@ import { Form, Select, DatePicker, Button, message, Spin } from "antd";
 
 const { Option } = Select;
 
-const UserWorkHistory = ({ userData }) => {
+const UserWorkHistory = ({ userData , user }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 

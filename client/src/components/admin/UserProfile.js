@@ -9,13 +9,21 @@ const { Title, Text } = Typography;
 const UserProfile = ({ adminRole }) => {
   const { id } = useParams(); // Get ID from URL params
   const [user, setUser] = useState(null); // Corrected to user (singular)
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     // Fetch user details
     axios
       .get(`${process.env.REACT_APP_API_URL}/user/user/${id}`)
       .then((response) => setUser(response.data))
-      .catch(() => message.error("Failed to load user data"));
+      .catch((error) => {
+        message.error(
+          error.response?.data?.errors?.[0]?.msg ||
+            error.response?.data?.error ||
+            "Failed to load user data"
+        );
+      })
+      .finally(() => setLoading(false)); // Stop loading
   }, [id]);
 
   return (
@@ -30,7 +38,23 @@ const UserProfile = ({ adminRole }) => {
           ? "Approve Admin"
           : "Admin"}
       </Tag>
-      {user ? (
+
+      {loading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "80vh",
+          }}
+        >
+          <Spin
+            size="large"
+            tip="Loading..."
+            style={{ fontSize: "24px", transform: "scale(2)" }} // Enlarges the spinner
+          />
+        </div>
+      ) : user ? (
         <div
           key={user._id}
           style={{
@@ -125,20 +149,7 @@ const UserProfile = ({ adminRole }) => {
           </Row>
         </div>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "80vh",
-          }}
-        >
-          <Spin
-            size="large"
-            tip="Loading..."
-            style={{ fontSize: "24px", transform: "scale(2)" }} // Enlarges the spinner
-          />
-        </div>
+        <Text>No user data found.</Text> // Show this if no data
       )}
     </div>
   );

@@ -22,7 +22,6 @@ export default function CheckingAdmin() {
 
   const columns = [
     { title: "Name", dataIndex: "nameWithInitial", key: "name" },
-    { title: "Email", dataIndex: "email", key: "email" },
     { title: "NIC", dataIndex: "NIC", key: "nic" },
     { title: "Gender", dataIndex: "gender", key: "gender" },
     { title: "Contact", dataIndex: "contactNumber", key: "contact" },
@@ -54,6 +53,8 @@ export default function CheckingAdmin() {
           rowKey="_id"
           pagination={{ pageSize: 5 }}
           locale={{ emptyText: "No pending users available." }}
+          scroll={{ x: "max-content" }} // Enables horizontal scrolling for wide content
+          responsive
         />
       </Card>
     </div>

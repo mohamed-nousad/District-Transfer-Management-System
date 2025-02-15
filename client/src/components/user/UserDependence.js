@@ -4,7 +4,7 @@ import { Form, Select, DatePicker, Button, message, Spin, Input } from "antd";
 
 const { Option } = Select;
 
-const Dependence = ({ userData }) => {
+const Dependence = ({ userData , user }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
@@ -20,7 +20,7 @@ const Dependence = ({ userData }) => {
       message.success(response.data.message || "Dependence added successfully");
       form.resetFields();
     } catch (error) {
-      message.error(error.response?.data?.error || "Failed. Try again.");
+      message.error(error.response?.data?.errors[0]?.msg  || error.response?.data?.error  || "Failed. Try again.");
     } finally {
       setLoading(false);
     }

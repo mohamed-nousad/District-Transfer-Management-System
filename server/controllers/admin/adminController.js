@@ -1,16 +1,30 @@
 const User = require("../../models/User");
 const Admin = require("../../models/Admin");
+const UserWorkHistory = require("../../models/UserWorkHistory");
+const UserDependence = require("../../models/UserDependence");
+const UserDisability = require("../../models/UserDisability");
+const UserDisease = require("../../models/UserDisease");
+const UserMedicalCondition = require("../../models/UserMedicalCondition");
 
 // Get All Pending Users
 const getPendingUsers = async (req, res) => {
   try {
+    const admin = await Admin.findOne(); // Get admin's workplace
+    const adminWorkplace = admin ? admin.workplace : null; // Assign workplace
+
+    if (!adminWorkplace) {
+      return res.status(400).json({ message: "Admin workplace not found" });
+    }
+
     const pendingUsers = await User.find({
       isSubmited: true,
       isChecked: false,
       isRecommended: false,
       isRejected: false,
       isApproved: false,
+      workplace: { $eq: adminWorkplace, $ne: null }, // Match users' workplace
     });
+
     res.status(200).json(pendingUsers);
   } catch (error) {
     console.error("Error fetching pending users:", error.message);
@@ -96,8 +110,11 @@ const checkUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    user.isSubmited = true;
     user.isChecked = true; // check User
-    user.isRejected = false; // Rejected User
+    user.isRecommended = false;
+    user.isApproved = false;
+    user.isRejected = false;
     await user.save();
 
     res.status(200).json({ message: "User checked successfully" });
@@ -119,8 +136,11 @@ const recommendUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.isRecommended = true; // recommend User user
-    user.isRejected = false; // Rejected User
+    user.isSubmited = true;
+    user.isChecked = true;
+    user.isRecommended = true; // Recommended User
+    user.isApproved = false;
+    user.isRejected = false;
     await user.save();
 
     res.status(200).json({ message: "User recommended successfully" });
@@ -142,8 +162,13 @@ const approveUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    user.isSubmited = true;
+    user.isChecked = true;
+    user.isRecommended = true;
     user.isApproved = true; // Approve user
-    user.isRejected = false; // Rejected User
+    user.isRejected = false;
+    user.progressValue += 10; // Add 10 progress value to the existing progressValue
+
     await user.save();
 
     res.status(200).json({ message: "User approved successfully" });
@@ -160,21 +185,34 @@ const rejectUser = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        isSubmited: false,
+        isChecked: false,
+        isRecommended: false,
+        isApproved: false,
+        isRejected: true,
+      },
+      { new: true }
+    );
 
-    user.isSubmited = false;
-    user.isRejected = true;
-    user.isChecked = false;
-    user.isRecommended = false;
-    user.isApproved = false;
-    await user.save();
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    res.status(200).json({ message: "User rejected successfully" });
+    // Delete related records except in the Users collection
+    await Promise.all([
+      UserWorkHistory.deleteMany({ userId }),
+      UserDependence.deleteMany({ userId }),
+      UserDisability.deleteMany({ userId }), // Add other related collections here
+      UserDisease.deleteMany({ userId }), // Add other related collections here
+      UserMedicalCondition.deleteMany({ userId }), // Add other related collections here
+    ]);
+
+    res
+      .status(200)
+      .json({ message: "User rejected and related records deleted" });
   } catch (error) {
-    console.error("Approval Error:", error.message);
+    console.error("Rejection Error:", error.message);
     res.status(500).json({ message: "Server error" });
   }
 };

@@ -5,7 +5,7 @@ import { message } from "antd";
 
 const useCheckUserAuth = () => {
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [authloading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const useCheckUserAuth = () => {
     setLoading(false);
   }, [navigate]);
 
-  return { userData, loading };
+  return { userData, authloading };
 };
 
 export default useCheckUserAuth;

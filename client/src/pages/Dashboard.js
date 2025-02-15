@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Button, Layout, Progress, Typography, Spin, message } from "antd";
+import {
+  Button,
+  Layout,
+  Progress,
+  Typography,
+  Spin,
+  message,
+  Badge,
+} from "antd";
 import axios from "axios";
+
 import useCheckUserAuth from "../utils/checkUserAuth";
 
 const { Content } = Layout;
@@ -13,7 +22,9 @@ const Dashboard = () => {
   useEffect(() => {
     if (userData) {
       axios
-        .get(`${process.env.REACT_APP_API_URL}/user/user/progress/${userData.id}`)
+        .get(
+          `${process.env.REACT_APP_API_URL}/user/user/progress/${userData.id}`
+        )
         .then((response) => setProfileCompletion(response.data.progress))
         .catch(() => message.error("Failed to fetch progress"));
     }
@@ -22,10 +33,13 @@ const Dashboard = () => {
   const handleRefresh = () => {
     if (userData) {
       axios
-        .put(`${process.env.REACT_APP_API_URL}/user/user/progress/${userData.id}`, { progressValue: profileCompletion })
+        .put(
+          `${process.env.REACT_APP_API_URL}/user/user/progress/${userData.id}`,
+          { progressValue: profileCompletion }
+        )
         .then((response) => {
-          setProfileCompletion(response.data.progress);
-          message.success("Progress updated!");
+          setProfileCompletion(response.data.progress); // Ensure correct response property
+          message.success(response.data.message || "Progress updated!");
         })
         .catch(() => message.error("Failed to update progress"));
     }
@@ -57,7 +71,8 @@ const Dashboard = () => {
       {userData ? (
         <div style={{ color: "black", margin: 40 }}>
           <Title level={2}>
-            Welcome, {userData.nameWithInitial || "User"} {userData.lastName || ""}
+            Welcome, {userData.nameWithInitial || "User"}{" "}
+            {userData.lastName || ""}
           </Title>
           <Text>{userData.NIC}</Text>
         </div>
@@ -69,16 +84,33 @@ const Dashboard = () => {
 
       <Progress
         percent={profileCompletion}
-        status={profileCompletion === 100 ? "success" : "active"}
+        status={
+          profileCompletion <= 15
+            ? "exception"
+            : profileCompletion <= 50
+            ? "active"
+            : profileCompletion <= 75
+            ? "normal"
+            : "success"
+        }
         showInfo={false}
-        strokeColor={profileCompletion === 100 ? "#4CAF50" : "#FF8C00"}
+        strokeColor={
+          profileCompletion <= 15
+            ? "#FF0000"
+            : profileCompletion <= 50
+            ? "#FF8C00"
+            : profileCompletion <= 75
+            ? "#2196F3"
+            : "#4CAF50"
+        }
         style={{ width: "80%", margin: "20px auto" }}
       />
-      <Text>{profileCompletion}%</Text>
+
+      <Text> {profileCompletion}%</Text>
 
       {profileCompletion === 100 && (
-        <span style={{ color: "#4CAF50", fontWeight: "bold", marginLeft: "10px" }}>
-          Completed with Verified Badge
+        <span style={{marginLeft: "10px" }}>
+          <Badge status="success" text="Completed" />
         </span>
       )}
 
@@ -92,7 +124,7 @@ const Dashboard = () => {
         </Button>
         <br />
         <Button type="default" style={{ width: "250px" }}>
-          Previous Applications
+          Apply transfer
         </Button>
       </div>
     </Content>

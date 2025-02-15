@@ -15,9 +15,8 @@ import { Grid } from "antd";
 const { useBreakpoint } = Grid;
 const { Content, Sider } = Layout;
 
-const UpdateProfile = () => {
+const UserViewProfile = () => {
   const { adminRole, loading } = useCheckAdminAuth();
-
   const [currentSection, setCurrentSection] = useState("UserProfile");
   const [drawerVisible, setDrawerVisible] = useState(false);
   const screens = useBreakpoint(); // Detect screen size
@@ -167,4 +166,4 @@ const UpdateProfile = () => {
   );
 };
 
-export default UpdateProfile;
+export default UserViewProfile;

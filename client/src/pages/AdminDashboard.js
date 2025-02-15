@@ -36,7 +36,7 @@ const AdminDashboard = () => {
         textAlign: "center",
       }}
     >
-      {adminRole === "approvalAdmin" ? (
+      {adminRole === "approveAdmin" ? (
         <ApprovalAdmin />
       ) : adminRole === "recommendAdmin" ? (
         <RecommendAdmin />

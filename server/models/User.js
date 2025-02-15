@@ -9,22 +9,20 @@ const UserSchema = new mongoose.Schema(
     gender: { type: String, required: true },
     dateOfBirth: { type: Date, required: true },
     address: { type: String, required: true },
-    email: { type: String, unique: true, sparse: true },
+    workplace: { type: String, required: true },
+    email: { type: String, default: null, sparse: true },
     contactNumber: { type: String, required: true },
     password: { type: String, required: true },
 
     //Null fields: Users can still update their profile after registration is approved by the admin
-    first_appointment_date: { type: Date, default: null },
+    first_appointment_date: { type: Date },
     duty_assumed_date: { type: Date, default: null },
-    workplace: { type: String, default: null },
-    workplace_postalcode: { type: String, default: null },
     designation: { type: String, default: null },
-    current_workplace: { type: String, default: null },
     service: { type: String, default: null },
     class: { type: String, default: null },
     city: { type: String, default: null },
 
-    progressValue: { type: Number, default: 13 }, // isSubmited status
+    progressValue: { type: Number, default: 15 }, // isSubmited status
     isSubmited: { type: Boolean, default: false }, // isSubmited status
     isChecked: { type: Boolean, default: false }, // isChecked status
     isRecommended: { type: Boolean, default: false }, // isRecommended status

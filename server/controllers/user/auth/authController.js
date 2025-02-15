@@ -12,6 +12,7 @@ const registerUser = async (req, res) => {
     gender,
     dateOfBirth,
     address,
+    workplace,
     email,
     contactNumber,
     password,
@@ -19,15 +20,23 @@ const registerUser = async (req, res) => {
 
   try {
     // Check if email already exists
-    const existingEmail = await User.findOne({ email });
-    if (existingEmail) {
-      return res.status(400).json({ message: "Email is already in use" });
+    if (email) {
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
+        return res.status(400).json({ message: "This email is already registered. Please try a different one"});
+      }
     }
 
     // Check if NIC already exists
     const existingNIC = await User.findOne({ NIC });
     if (existingNIC) {
-      return res.status(400).json({ message: "NIC is already in use" });
+      return res.status(400).json({ message: "This NIC is already registered. Please try a different one" });
+    }
+
+    // Check if contactNumber already exists
+    const existingcontactNumber = await User.findOne({ contactNumber });
+    if (existingcontactNumber) {
+      return res.status(400).json({ message: "This contact number is already registered. Please try a different one"});
     }
 
     // Hash the password
@@ -43,6 +52,7 @@ const registerUser = async (req, res) => {
       gender,
       dateOfBirth,
       address,
+      workplace,
       email,
       contactNumber,
       password: hashedPassword,
@@ -52,11 +62,11 @@ const registerUser = async (req, res) => {
     await newUser.save();
 
     res.status(201).json({
-      message: "registeration successful",
+      message: "Registeration successful",
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error"});
   }
 };
 
@@ -68,7 +78,9 @@ const loginUser = async (req, res) => {
     // Check if user exists
     const user = await User.findOne({ NIC });
     if (!user) {
-      return res.status(404).json({ message: "Account not found. Please check your NIC" });
+      return res
+        .status(404)
+        .json({ message: "Account not found. Please check your NIC" });
     }
 
     // Validate password

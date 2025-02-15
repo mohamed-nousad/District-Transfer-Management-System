@@ -42,7 +42,11 @@ const UserProfile = ({ adminRole }) => {
       }
     } catch (error) {
       console.error("Error updating user:", error);
-      message.error("Failed to update user");
+      message.error(
+        error.response?.data?.errors?.[0]?.msg ||
+          error.response?.data?.error ||
+          "Failed to load user data"
+      );
     }
   };
 

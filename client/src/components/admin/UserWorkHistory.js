@@ -9,6 +9,7 @@ const { Title, Text } = Typography;
 const UserWorkHistory = ({ adminRole }) => {
   const { id } = useParams(); // Get ID from URL params
   const [workHistories, setWorkHistories] = useState([]); // Use an array for work histories
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     axios
@@ -20,7 +21,14 @@ const UserWorkHistory = ({ adminRole }) => {
           message.error("Work history not found");
         }
       })
-      .catch(() => message.error("Failed to load user data"));
+      .catch((error) => {
+        message.error(
+          error.response?.data?.errors?.[0]?.msg ||
+            error.response?.data?.error ||
+            "Failed to load user data"
+        );
+      })
+      .finally(() => setLoading(false)); // Stop loading
   }, [id]);
 
   return (
@@ -35,7 +43,23 @@ const UserWorkHistory = ({ adminRole }) => {
           ? "Approve Admin"
           : "Admin"}
       </Tag>
-      {workHistories.length > 0 ? (
+
+      {loading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "80vh",
+          }}
+        >
+          <Spin
+            size="large"
+            tip="Loading..."
+            style={{ fontSize: "24px", transform: "scale(2)" }} // Enlarges the spinner
+          />
+        </div>
+      ) : workHistories.length > 0 ? (
         workHistories.map((history) => (
           <div
             key={history._id}
@@ -117,20 +141,7 @@ const UserWorkHistory = ({ adminRole }) => {
           </div>
         ))
       ) : (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "80vh",
-          }}
-        >
-          <Spin
-            size="large"
-            tip="Loading..."
-            style={{ fontSize: "24px", transform: "scale(2)" }} // Enlarges the spinner
-          />
-        </div>
+        <Text>No work history found.</Text> // Show this if no data
       )}
     </div>
   );

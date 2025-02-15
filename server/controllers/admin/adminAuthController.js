@@ -3,28 +3,35 @@ const Admin = require("../../models/Admin"); // Use Admin model for admin authen
 
 // Register Admin
 exports.registerAdmin = async (req, res) => {
-  const { adminId, adminRole, workplace_postalcode, password } = req.body;
+  const { adminId, adminRole, workplace, password } = req.body;
+  let errors = [];
+
+  // Check if all required fields are provided
+  if (!adminId) errors.push("Admin ID is required");
+  if (!adminRole) errors.push("Admin Role is required");
+  if (!workplace) errors.push("Workplace is required");
+  if (!password) errors.push("Password is required");
+
+  if (errors.length > 0) return res.status(400).json({ errors });
 
   try {
     // Check if Admin already exists
     const existingAdmin = await Admin.findOne({ adminId });
     if (existingAdmin) {
-      return res.status(400).json({ message: "Admin Id already exists" });
+      return res.status(400).json({ message: "Admin ID already exists" });
     }
 
     const newAdmin = new Admin({
       adminId,
       adminRole,
-      workplace_postalcode,
+      workplace,
       password,
     });
 
     // Save to database
     await newAdmin.save();
 
-    res.status(201).json({
-      message: "Admin registered successfully",
-    });
+    res.status(201).json({ message: "Admin registered successfully" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server error" });
@@ -36,7 +43,7 @@ const generateTokens = (admin) => {
   const accessToken = jwt.sign(
     { adminId: admin._id, adminRole: admin.adminRole }, // Include adminRole here
     process.env.JWT_SECRET,
-    { expiresIn: "1m" }
+    { expiresIn: "5m" }
   );
 
   return { accessToken };

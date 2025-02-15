@@ -25,11 +25,6 @@ export default function CheckingAdmin() {
       key: "name",
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
       title: "NIC",
       dataIndex: "NIC",
       key: "nic",
@@ -72,9 +67,9 @@ export default function CheckingAdmin() {
           dataSource={checkedUsers}
           rowKey="_id"
           pagination={{ pageSize: 5 }}
-          locale={{
-            emptyText: "No Checked users available.",
-          }}
+          locale={{ emptyText: "No checked users available." }}
+          scroll={{ x: 'max-content' }}  // Enables horizontal scrolling for wide content
+          responsive
         />
       </Card>
     </div>

@@ -9,6 +9,7 @@ const { Title, Text } = Typography;
 const UserDependence = ({ adminRole }) => {
   const { id } = useParams(); // Get ID from URL params
   const [dependence, setdependence] = useState([]); // Use an array for work histories
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     axios
@@ -20,7 +21,14 @@ const UserDependence = ({ adminRole }) => {
           message.error("Dependence  not found");
         }
       })
-      .catch(() => message.error("Failed to load user data"));
+      .catch((error) => {
+        message.error(
+          error.response?.data?.errors?.[0]?.msg ||
+            error.response?.data?.error ||
+            "Failed to load user data"
+        );
+      })
+      .finally(() => setLoading(false)); // Stop loading
   }, [id]);
 
   return (
@@ -35,7 +43,22 @@ const UserDependence = ({ adminRole }) => {
           ? "Approve Admin"
           : "Admin"}
       </Tag>
-      {dependence.length > 0 ? (
+      {loading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "80vh",
+          }}
+        >
+          <Spin
+            size="large"
+            tip="Loading..."
+            style={{ fontSize: "24px", transform: "scale(2)" }} // Enlarges the spinner
+          />
+        </div>
+      ) : dependence.length > 0 ? (
         dependence.map((dependence) => (
           <div
             key={dependence._id}
@@ -120,20 +143,7 @@ const UserDependence = ({ adminRole }) => {
           </div>
         ))
       ) : (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "80vh",
-          }}
-        >
-          <Spin
-            size="large"
-            tip="Loading..."
-            style={{ fontSize: "24px", transform: "scale(2)" }} // Enlarges the spinner
-          />
-        </div>
+        <Text>No dependence found.</Text> // Show this if no data
       )}
     </div>
   );

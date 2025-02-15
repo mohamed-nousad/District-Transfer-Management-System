@@ -19,7 +19,6 @@ const Register = () => {
 
       if (response) {
         setSuccess(response.data.message || "Registration Successful!");
-        setError("");
         message.success(response.data.message || "Registration Successful!");
         setTimeout(() => setSuccess(""), 6000);
       }
@@ -29,7 +28,6 @@ const Register = () => {
       setError(
         err.response?.data?.message || "Registration failed. Please try again."
       );
-      setTimeout(() => setError(""), 6000);
       message.error(err.response?.data?.message || "Registration failed.");
     }
   };
@@ -100,8 +98,8 @@ const Register = () => {
                 rules={[{ required: true, message: "Required" }]}
               >
                 <Select>
-                  <Option value="male">Male</Option>
-                  <Option value="female">Female</Option>
+                  <Select.Option value="male">Male</Select.Option>
+                  <Select.Option value="female">Female</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -127,19 +125,83 @@ const Register = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[
-                  { required: true, type: "email", message: "Invalid email" },
-                ]}
-              >
-                <Input />
+              <Form.Item label="Workplace" name="workplace">
+                <Select>
+                  <Select.Option value="District Secretariat, Ampara">
+                    District Secretariat, Ampara
+                  </Select.Option>
+                  <Option value="Divisional Secretariat, Ampara">
+                    Divisional Secretariat, Ampara
+                  </Option>
+                  <Option value="Divisional Secretariat, Dehiaththakandiya">
+                    Divisional Secretariat, Dehiaththakandiya
+                  </Option>
+                  <Option value="Divisional Secretariat, Alayadivembu">
+                    Divisional Secretariat, Alayadivembu
+                  </Option>
+                  <Option value="Divisional Secretariat, Uhana">
+                    Divisional Secretariat, Uhana
+                  </Option>
+                  <Option value="Divisional Secretariat, Mahaoya">
+                    Divisional Secretariat, Mahaoya
+                  </Option>
+                  <Option value="Divisional Secretariat, Padiyathalawa">
+                    Divisional Secretariat, Padiyathalawa
+                  </Option>
+                  <Option value="Divisional Secretariat, Damana">
+                    Divisional Secretariat, Damana
+                  </Option>
+                  <Option value="Divisional Secretariat, Lahugala">
+                    Divisional Secretariat, Lahugala
+                  </Option>
+                  <Option value="Divisional Secretariat, Irakkamam">
+                    Divisional Secretariat, Irakkamam
+                  </Option>
+                  <Option value="Divisional Secretariat, Sammanthurai">
+                    Divisional Secretariat, Sammanthurai
+                  </Option>
+                  <Option value="Divisional Secretariat, Sainthamaruthu">
+                    Divisional Secretariat, Sainthamaruthu
+                  </Option>
+                  <Option value="Divisional Secretariat, Ninthavur">
+                    Divisional Secretariat, Ninthavur
+                  </Option>
+                  <Option value="Divisional Secretariat, Addalachchenai">
+                    Divisional Secretariat, Addalachchenai
+                  </Option>
+                  <Option value="Divisional Secretariat, Akkaraipaththu">
+                    Divisional Secretariat, Akkaraipaththu
+                  </Option>
+                  <Option value="Divisional Secretariat, Thirukkovil">
+                    Divisional Secretariat, Thirukkovil
+                  </Option>
+                  <Option value="Divisional Secretariat, Pothuvil">
+                    Divisional Secretariat, Pothuvil
+                  </Option>
+                  <Option value="Divisional Secretariat, Kalmunai (Muslim)">
+                    Divisional Secretariat, Kalmunai (Muslim)
+                  </Option>
+                  <Option value="Divisional Secretariat, Kalmunai (Tamil)">
+                    Divisional Secretariat, Kalmunai (Tamil)
+                  </Option>
+                  <Option value="Divisional Secretariat, Karathivu">
+                    Divisional Secretariat, Karathivu
+                  </Option>
+                </Select>
               </Form.Item>
             </Col>
           </Row>
 
           <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="Email (optional)"
+                name="email"
+                rules={[{ type: "email", message: "Invalid email" }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
             <Col span={12}>
               <Form.Item
                 label="Contact Number"
@@ -149,6 +211,9 @@ const Register = () => {
                 <Input />
               </Form.Item>
             </Col>
+          </Row>
+
+          <Row gutter={16}>
             <Col span={12}>
               <Form.Item
                 label="Password"

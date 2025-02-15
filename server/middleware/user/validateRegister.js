@@ -7,6 +7,7 @@ const validateRegistration = (req, res, next) => {
     gender,
     dateOfBirth,
     address,
+    workplace,
     email,
     contactNumber,
     password,
@@ -26,7 +27,7 @@ const validateRegistration = (req, res, next) => {
   if (!gender) errors.push("Gender is required");
   if (!dateOfBirth) errors.push("Date of birth is required");
   if (!address) errors.push("Address is required");
-  if (!email) errors.push("Email is required");
+  if (!workplace) errors.push("Workplace is required");
   if (!contactNumber) errors.push("Contact number is required");
   if (!password) errors.push("Password is required");
 

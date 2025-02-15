@@ -18,6 +18,11 @@ exports.createDependence = async (req, res) => {
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
 
+  // Check if NIC already exists
+  const existingDependentNIC = await UserDependence.findOne({ dependentNIC: req.body.dependentNIC });
+  if (existingDependentNIC) {
+    return res.status(400).json({ error: "Dependent NIC is already in use" });
+  }
   try {
     const dependence = await UserDependence.create(req.body);
     res.status(201).json(dependence);

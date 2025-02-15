@@ -9,6 +9,7 @@ const { Title, Text } = Typography;
 const UserDisease = ({ adminRole }) => {
   const { id } = useParams(); // Get ID from URL params
   const [diseases, setDisease] = useState([]); // Use an array for work histories
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     axios
@@ -20,7 +21,14 @@ const UserDisease = ({ adminRole }) => {
           message.error("disease not found");
         }
       })
-      .catch(() => message.error("Failed to load user data"));
+      .catch((error) => {
+        message.error(
+          error.response?.data?.errors?.[0]?.msg ||
+            error.response?.data?.error ||
+            "Failed to load user data"
+        );
+      })
+      .finally(() => setLoading(false)); // Stop loading
   }, [id]);
 
   return (
@@ -35,7 +43,22 @@ const UserDisease = ({ adminRole }) => {
           ? "Approve Admin"
           : "Admin"}
       </Tag>
-      {diseases.length > 0 ? (
+      {loading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "80vh",
+          }}
+        >
+          <Spin
+            size="large"
+            tip="Loading..."
+            style={{ fontSize: "24px", transform: "scale(2)" }} // Enlarges the spinner
+          />
+        </div>
+      ) : diseases.length > 0 ? (
         diseases.map((disease) => (
           <div
             key={disease._id}
@@ -76,20 +99,7 @@ const UserDisease = ({ adminRole }) => {
           </div>
         ))
       ) : (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "80vh",
-          }}
-        >
-          <Spin
-            size="large"
-            tip="Loading..."
-            style={{ fontSize: "24px", transform: "scale(2)" }} // Enlarges the spinner
-          />
-        </div>
+        <Text>No disease found.</Text> // Show this if no data
       )}
     </div>
   );

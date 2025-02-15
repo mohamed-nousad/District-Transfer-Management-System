@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Layout, Menu, Breadcrumb, Button, Drawer, Spin } from "antd";
+import React, { useState, useEffect } from "react";
+import { Layout, Menu, Breadcrumb, Button, Drawer, Spin, Alert } from "antd";
 import { UserOutlined, MenuOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import UserProfile from "../components/user/UserProfile";
@@ -10,17 +10,39 @@ import UserMedicalCondition from "../components/user/UserMedicalCondition";
 import UserDisability from "../components/user/UserDisability";
 import FinalSubmition from "../components/user/FinalSubmition";
 import useCheckAdminAuth from "../utils/checkUserAuth";
+import axios from "axios";
 
 import { Grid } from "antd";
 const { useBreakpoint } = Grid;
 const { Content, Sider } = Layout;
 
 const UpdateProfile = () => {
-  const { userData, loading } = useCheckAdminAuth();
+  const { userData, authloading } = useCheckAdminAuth();
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [currentSection, setCurrentSection] = useState("UserProfile");
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const screens = useBreakpoint(); // Detect screen size
+  const screens = useBreakpoint();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user/user/${userData?.id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setUser(response.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (userData?.id) fetchUserData();
+  }, [userData]);
 
   const sections = [
     { key: "UserProfile", label: "User Profile" },
@@ -35,19 +57,19 @@ const UpdateProfile = () => {
   const renderContent = () => {
     switch (currentSection) {
       case "UserProfile":
-        return <UserProfile userData={userData} />;
+        return <UserProfile userData={userData} user={user} />;
       case "WorkHistory":
-        return <UserWorkHistory userData={userData} />;
+        return <UserWorkHistory userData={userData} user={user} />;
       case "Dependence":
-        return <UserDependence userData={userData} />;
+        return <UserDependence userData={userData} user={user} />;
       case "Disease":
-        return <UserDisease userData={userData} />;
+        return <UserDisease userData={userData} user={user} />;
       case "MedicalCondition":
-        return <UserMedicalCondition userData={userData} />;
+        return <UserMedicalCondition userData={userData} user={user} />;
       case "Disability":
-        return <UserDisability userData={userData} />;
+        return <UserDisability userData={userData} user={user} />;
       case "FinalSubmition":
-        return <FinalSubmition userData={userData} />;
+        return <FinalSubmition userData={userData} user={user} />;
       default:
         return null;
     }
@@ -56,7 +78,7 @@ const UpdateProfile = () => {
   const showDrawer = () => setDrawerVisible(true);
   const closeDrawer = () => setDrawerVisible(false);
 
-  if (loading)
+  if (authloading || loading)
     return (
       <div
         style={{
@@ -160,8 +182,32 @@ const UpdateProfile = () => {
             <Link to="/dashboard">Dashboard</Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>User Profile</Breadcrumb.Item>
+          <Alert
+            style={{ maxWidth: 300, fontSize: 12, padding: "4px 8px" }}
+            message={
+              user.isRejected
+                ? "Your data is invalid, please resubmit"
+                : user.isSubmited
+                ? "Your data submitted, please wait"
+                : "To complete your profile, fill all forms and submit"
+            }
+            type={
+              user.isRejected
+                ? "error"
+                : user.isSubmited
+                ? "success"
+                : "warning"
+            }
+            showIcon
+            className="mb-4"
+          />
         </Breadcrumb>
+        <div className="m-auto w-full text-center"></div>
+
         {renderContent()}
+        {error && (
+          <Alert message={error} type="error" showIcon className="mb-4" />
+        )}
       </Content>
     </>
   );

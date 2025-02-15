@@ -26,7 +26,7 @@ const FinalSubmissionPage = ({ userData }) => {
       setLoading(true);
 
       // Update the user's `isSubmited` status to true
-      const updatedData = { isSubmited: true };
+      const updatedData = { isSubmited: true, isRejected: false };
 
       // Send the update request to backend
       const response = await axios.put(
@@ -59,6 +59,7 @@ const FinalSubmissionPage = ({ userData }) => {
       <Title level={2}>Final Submission</Title>
       <Paragraph>
         Before submitting, please review and accept the Terms & Conditions.
+        <br></br><sapn className="text-red-700">you can submit only once !</sapn>
       </Paragraph>
 
       <Form layout="vertical" onFinish={onFinish}>
