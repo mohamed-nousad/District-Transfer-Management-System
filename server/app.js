@@ -5,7 +5,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 
 // Load environment variables
-dotenv.config({ path: path.join(__dirname, "config/config.env") });
+dotenv.config();
 
 // Ensure required env variables are set
 if (!process.env.MONGO_URL) {
