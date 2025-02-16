@@ -158,7 +158,7 @@ const UserViewProfile = () => {
           <Breadcrumb.Item>
             <Link to="/admin_dashboard">Dashboard</Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Item>User Profile</Breadcrumb.Item>
+          <Breadcrumb.Item>{currentSection}</Breadcrumb.Item>
         </Breadcrumb>
         {renderContent()}
       </Content>

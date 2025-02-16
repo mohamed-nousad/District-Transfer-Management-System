@@ -99,6 +99,12 @@ const LoginPage = () => {
               Register
             </Link>
           </p>
+          <p className="text-sm text-gray-600">
+            Are you an admin?{" "}
+            <Link to="/admin_login" className="text-blue-600 hover:underline">
+              Admin Login
+            </Link>
+          </p>
         </div>
       </div>
     </div>

@@ -125,7 +125,11 @@ const Register = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Workplace" name="workplace">
+              <Form.Item
+                label="Workplace"
+                name="workplace"
+                rules={[{ required: true, message: "Workplace Required" }]}
+              >
                 <Select>
                   <Select.Option value="District Secretariat, Ampara">
                     District Secretariat, Ampara

@@ -61,13 +61,13 @@ export default function CheckingAdmin() {
         <Alert message={message} type="error" showIcon className="mb-4" />
       )}
 
-      <Card title="Approved Users" bordered>
+      <Card title="Recommended Users" bordered>
         <Table
           columns={columns}
           dataSource={recommendedUsers}
           rowKey="_id"
           pagination={{ pageSize: 5 }}
-          locale={{ emptyText: "No approved users available." }}
+          locale={{ emptyText: "No recommended users available." }}
           scroll={{ x: "max-content" }} // Enables horizontal scrolling for wide content
           responsive
         />

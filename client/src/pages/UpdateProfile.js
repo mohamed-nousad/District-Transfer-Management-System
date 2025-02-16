@@ -55,24 +55,59 @@ const UpdateProfile = () => {
   ];
 
   const renderContent = () => {
-    switch (currentSection) {
-      case "UserProfile":
-        return <UserProfile userData={userData} user={user} />;
-      case "WorkHistory":
-        return <UserWorkHistory userData={userData} user={user} />;
-      case "Dependence":
-        return <UserDependence userData={userData} user={user} />;
-      case "Disease":
-        return <UserDisease userData={userData} user={user} />;
-      case "MedicalCondition":
-        return <UserMedicalCondition userData={userData} user={user} />;
-      case "Disability":
-        return <UserDisability userData={userData} user={user} />;
-      case "FinalSubmition":
-        return <FinalSubmition userData={userData} user={user} />;
-      default:
-        return null;
-    }
+    const content = (
+      <div style={{ position: "relative" }}>
+        {currentSection === "UserProfile" && (
+          <UserProfile userData={userData} />
+        )}
+        {currentSection === "WorkHistory" && (
+          <UserWorkHistory userData={userData} />
+        )}
+        {currentSection === "Dependence" && (
+          <UserDependence userData={userData} />
+        )}
+        {currentSection === "Disease" && <UserDisease userData={userData} />}
+        {currentSection === "MedicalCondition" && (
+          <UserMedicalCondition userData={userData} />
+        )}
+        {currentSection === "Disability" && (
+          <UserDisability userData={userData} />
+        )}
+        {currentSection === "FinalSubmition" && (
+          <FinalSubmition userData={userData} user={user} />
+        )}
+      </div>
+    );
+
+    return user.isSubmited ? (
+      <div style={{ position: "relative" }}>
+        {content}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "white",
+            fontSize: "20px",
+            fontWeight: "bold",
+          }}
+        >
+          {user.isApproved
+            ? "Profile Verified - Read only"
+            : user.isSubmited
+            ? "Profile Submited - Read only"
+            : " "}
+        </div>
+      </div>
+    ) : (
+      content
+    );
   };
 
   const showDrawer = () => setDrawerVisible(true);
@@ -181,27 +216,37 @@ const UpdateProfile = () => {
           <Breadcrumb.Item>
             <Link to="/dashboard">Dashboard</Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Item>User Profile</Breadcrumb.Item>
-          <Alert
-            style={{ maxWidth: 300, fontSize: 12, padding: "4px 8px" }}
-            message={
-              user.isRejected
-                ? "Your data is invalid, please resubmit"
-                : user.isSubmited
-                ? "Your data submitted, please wait"
-                : "To complete your profile, fill all forms and submit"
-            }
-            type={
-              user.isRejected
-                ? "error"
-                : user.isSubmited
-                ? "success"
-                : "warning"
-            }
-            showIcon
-            className="mb-4"
-          />
+          <Breadcrumb.Item>{currentSection}</Breadcrumb.Item>
         </Breadcrumb>
+        <Alert
+          style={{
+            maxWidth: 900,
+            fontSize: 12,
+            padding: "4px 8px",
+            alignItems: "center",
+            margin: "auto",
+          }}
+          message={
+            user.isApproved
+              ? "Profile verified"
+              : user.isRejected
+              ? "Your data is invalid, please resubmit"
+              : user.isSubmited
+              ? "Your data submitted, please wait for the approval"
+              : "To complete your profile, fill all forms and submit"
+          }
+          type={
+            user.isApproved
+              ? "success"
+              : user.isRejected
+              ? "error"
+              : user.isSubmited
+              ? "success"
+              : "warning"
+          }
+          showIcon
+          className="mb-4"
+        />
         <div className="m-auto w-full text-center"></div>
 
         {renderContent()}

@@ -12,7 +12,7 @@ import ApprovedUsers from "./pages/ApprovedUsers";
 import RejectedUsers from "./pages/RejectedUsers";
 import TotalUsers from "./pages/TotalUsers";
 import UserViewProfile from "./pages/UserViewProfile";
-import Test from "./Test";
+import Test from "./pages/Test";
 import Test2 from "./pages/Test2";
 
 const RoutesPage = () => {

@@ -22,6 +22,7 @@ export default function CheckingAdmin() {
 
   const columns = [
     { title: "Name", dataIndex: "nameWithInitial", key: "name" },
+    { title: "Designation", dataIndex: "designation", key: "designation" },
     { title: "NIC", dataIndex: "NIC", key: "nic" },
     { title: "Gender", dataIndex: "gender", key: "gender" },
     { title: "Contact", dataIndex: "contactNumber", key: "contact" },

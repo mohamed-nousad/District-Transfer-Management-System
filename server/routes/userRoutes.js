@@ -114,7 +114,6 @@ router.post(
 
 router.get(
   "/workhistory",
-  validateUser,
   UserWorkHistoryController.getAllWorkHistories
 );
 router.get("/workhistory/:id", UserWorkHistoryController.getOneWorkHistory);

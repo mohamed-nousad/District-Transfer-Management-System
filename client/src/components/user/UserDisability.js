@@ -1,13 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Form, Select, Input, Button, message, Spin } from "antd";
-
+import { Form, Select, Input, Button, message, Spin, Table } from "antd";
+import moment from "moment";
 const { Option } = Select;
 
-const UserDisability = ({ userData , user}) => {
+const UserDisability = ({ userData }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [showYears, setShowYears] = useState(false);
+
+  const [disabilities, setDisabilities] = useState([]);
+
+  useEffect(() => {
+    fetchDisabilities();
+  }, []);
+
+  const fetchDisabilities = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/user/disability/user/${userData.id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setDisabilities(response.data || []);
+    } catch (error) {
+      message.error(
+        error.response?.data?.error || "Failed to fetch disabilities"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onFinish = async (values) => {
     try {
@@ -20,38 +44,70 @@ const UserDisability = ({ userData , user}) => {
       );
       message.success(response.data.message || "Disability added successfully");
       form.resetFields();
+      fetchDisabilities();
     } catch (error) {
-      message.error(error.response?.data?.error || "Something went wrong");
+      message.error(
+        error.response?.data?.error ||
+          error.response?.data?.errors[0]?.msg ||
+          "Something went wrong"
+      );
     } finally {
       setLoading(false);
     }
   };
+
+  const columns = [
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+    },
+    {
+      title: "Level",
+      dataIndex: "level",
+      key: "level",
+    },
+    {
+      title: "Since Birth",
+      dataIndex: "since_birth",
+      key: "since_birth",
+      render: (text) => (text ? "Yes" : "No")
+    },
+    {
+      title: "Number of years",
+      dataIndex: "how_many_years",
+      key: "how_many_years",
+      render: (text) => text || "N/A",
+    },
+  ];
+
   return (
     <div style={{ maxWidth: 1200, margin: "auto", padding: 30 }}>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
           <Form.Item
-            label="Type"
+            label="Disability Type"
             name="type"
             style={{ flex: "1 1 48%" }}
             rules={[{ required: true }]}
           >
             <Select onChange={(value) => setShowYears(value === "false")}>
-              <Option value="mental">Mental </Option>
+              <Option value="Hearing">Hearing </Option>
               <Option value="visual">Visual</Option>
-              <Option value="phycological">Phycological</Option>
+              <Option value="Physical">Physical</Option>
+              <Option value="Phycological">Phycological</Option>
             </Select>
           </Form.Item>
           <Form.Item
-            label="Level"
+            label="Disability Level"
             name="level"
             style={{ flex: "1 1 48%" }}
             rules={[{ required: true }]}
           >
             <Select onChange={(value) => setShowYears(value === "false")}>
-              <Option value="mental">Mental </Option>
-              <Option value="visual">Visual</Option>
-              <Option value="phycological">Phycological</Option>
+              <Option value="mental">Severe</Option>
+              <Option value="visual">Mild</Option>
+              <Option value="phycological">Low</Option>
             </Select>
           </Form.Item>
           <Form.Item
@@ -68,7 +124,7 @@ const UserDisability = ({ userData , user}) => {
 
           {showYears && (
             <Form.Item
-              label="How Many Years"
+              label="Number of years"
               name="how_many_years"
               style={{ flex: "1 1 48%" }}
               rules={[
@@ -84,6 +140,14 @@ const UserDisability = ({ userData , user}) => {
           {loading ? <Spin /> : "Save"}
         </Button>
       </Form>
+      <h2 style={{ marginTop: 30 }}>Disabilities</h2>
+      <Table
+        dataSource={disabilities}
+        columns={columns}
+        rowKey="id"
+        loading={loading}
+        responsive
+      />
     </div>
   );
 };

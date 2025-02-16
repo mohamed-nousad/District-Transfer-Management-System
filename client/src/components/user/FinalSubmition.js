@@ -5,7 +5,7 @@ import axios from "axios";
 
 const { Title, Paragraph } = Typography;
 
-const FinalSubmissionPage = ({ userData }) => {
+const FinalSubmissionPage = ({ userData, user }) => {
   const [loading, setLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const navigate = useNavigate();
@@ -59,7 +59,8 @@ const FinalSubmissionPage = ({ userData }) => {
       <Title level={2}>Final Submission</Title>
       <Paragraph>
         Before submitting, please review and accept the Terms & Conditions.
-        <br></br><sapn className="text-red-700">you can submit only once !</sapn>
+        <br></br>
+        <sapn className="text-red-700">you can submit only once !</sapn>
       </Paragraph>
 
       <Form layout="vertical" onFinish={onFinish}>
@@ -68,19 +69,24 @@ const FinalSubmissionPage = ({ userData }) => {
           valuePropName="checked"
           rules={[{ required: true, message: "You must accept the terms!" }]}
         >
-          <Checkbox onChange={handleTermsChange}>
-            I have read and accept the <a href="/terms">Terms & Conditions</a>.
-          </Checkbox>
+          {!user.isSubmited && (
+            <Checkbox onChange={handleTermsChange}>
+              I have read and accept the <a href="/terms">Terms & Conditions</a>
+              .
+            </Checkbox>
+          )}
         </Form.Item>
 
-        <Button
-          type="primary"
-          htmlType="submit"
-          block
-          disabled={loading || !termsAccepted}
-        >
-          {loading ? <Spin /> : "Submit"}
-        </Button>
+        {!user.isSubmited && (
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            disabled={loading || !termsAccepted}
+          >
+            {loading ? <Spin /> : "Submit"}
+          </Button>
+        )}
       </Form>
     </div>
   );

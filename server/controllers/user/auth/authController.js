@@ -23,20 +23,34 @@ const registerUser = async (req, res) => {
     if (email) {
       const existingEmail = await User.findOne({ email });
       if (existingEmail) {
-        return res.status(400).json({ message: "This email is already registered. Please try a different one"});
+        return res
+          .status(400)
+          .json({
+            message:
+              "This email is already registered. Please try a different one",
+          });
       }
     }
 
     // Check if NIC already exists
     const existingNIC = await User.findOne({ NIC });
     if (existingNIC) {
-      return res.status(400).json({ message: "This NIC is already registered. Please try a different one" });
+      return res
+        .status(400)
+        .json({
+          message: "This NIC is already registered. Please try a different one",
+        });
     }
 
     // Check if contactNumber already exists
     const existingcontactNumber = await User.findOne({ contactNumber });
     if (existingcontactNumber) {
-      return res.status(400).json({ message: "This contact number is already registered. Please try a different one"});
+      return res
+        .status(400)
+        .json({
+          message:
+            "This contact number is already registered. Please try a different one",
+        });
     }
 
     // Hash the password
@@ -66,7 +80,7 @@ const registerUser = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ message: "Server error"});
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -101,9 +115,10 @@ const loginUser = async (req, res) => {
         id: user._id,
         nameWithInitial: user.nameWithInitial,
         NIC: user.NIC,
+        isSubmited: user.isSubmited,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" } // Adjust expiration time
+      { expiresIn: 1200 } // Adjust expiration time
     );
 
     res.status(200).json({
@@ -112,6 +127,7 @@ const loginUser = async (req, res) => {
       user: {
         nameWithInitial: user.nameWithInitial,
         NIC: user.NIC,
+        isSubmited: user.isSubmited,
       },
     });
   } catch (error) {

@@ -1,42 +1,61 @@
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+// import React, { useEffect, useState } from 'react';
+// import { Form, Input, Button, message } from 'antd';
+// import { useSWRConfig } from 'swr';
+// import { createUser, updateUser, getUsers } from '../api';
 
-const AdminDashboard = () => {
-  const [users, setUsers] = useState([]);
+// const UserForm = ({ userId, onFormSubmit }) => {
+//   const [form] = Form.useForm();
+//   const { mutate } = useSWRConfig();
 
-  useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/admin/pending-users`) // Fetch all users from the backend
-      .then((res) => res.json())
-      .then((data) => setUsers(data));
-  }, []);
+//   useEffect(() => {
+//     if (userId) {
+//       // Fetch user data for update
+//       const fetchUserData = async () => {
+//         const { data } = await getUsers(`/user/${userId}`);
+//         form.setFieldsValue(data);
+//       };
+//       fetchUserData();
+//     }
+//   }, [userId, form]);
 
-  return (
-    <div>
-      <h2>Admin Dashboard</h2>
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user._id}>
-              <td>{user.nameWithInitial}</td>
-              <td>{user.email}</td>
-              <td>
-                <Link to={`/test2/${user._id}`}>
-                  <button className="btn-primary">View</button>
-                </Link>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
+//   const handleSubmit = async (values) => {
+//     try {
+//       if (userId) {
+//         await updateUser(userId, values);
+//         message.success('User updated successfully!');
+//       } else {
+//         await createUser(values);
+//         message.success('User created successfully!');
+//       }
+//       mutate('/user/workhistory'); // Re-fetch data after CRUD
+//       onFormSubmit(); // Refresh parent component
+//     } catch (err) {
+//       message.error(err.response?.data?.errors?.[0]?.msg || 'Error occurred!');
+//     }
+//   };
 
-export default AdminDashboard;
+//   return (
+//     <Form form={form} layout="vertical" onFinish={handleSubmit}>
+//       <Form.Item label="Workplace" name="workplace" rules={[{ required: true, message: 'Workplace is required' }]}>
+//         <Input />
+//       </Form.Item>
+//       <Form.Item label="Workplace Type" name="workplace_type" rules={[{ required: true, message: 'Workplace type is required' }]}>
+//         <Input />
+//       </Form.Item>
+//       <Form.Item label="Start Date" name="start_date" rules={[{ required: true, message: 'Start date is required' }]}>
+//         <Input type="date" />
+//       </Form.Item>
+//       <Form.Item label="End Date" name="end_date" rules={[{ required: true, message: 'End date is required' }]}>
+//         <Input type="date" />
+//       </Form.Item>
+//       <Form.Item label="Designation" name="designation" rules={[{ required: true, message: 'Designation is required' }]}>
+//         <Input />
+//       </Form.Item>
+//       <Button type="primary" htmlType="submit">
+//         {userId ? 'Update User' : 'Create User'}
+//       </Button>
+//     </Form>
+//   );
+// };
+
+// export default UserForm;

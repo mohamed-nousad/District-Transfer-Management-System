@@ -120,6 +120,14 @@ const UserProfile = ({ adminRole }) => {
             </Col>
             <Col span={12}>
               <Title level={5} style={{ textAlign: "left" }}>
+                Address
+              </Title>
+            </Col>
+            <Col span={12}>
+              <Text>{user.address || "N/A"}</Text>
+            </Col>
+            <Col span={12}>
+              <Title level={5} style={{ textAlign: "left" }}>
                 Email:
               </Title>
             </Col>
@@ -145,6 +153,42 @@ const UserProfile = ({ adminRole }) => {
                   ? new Date(user.first_appointment_date).toLocaleDateString()
                   : "N/A"}
               </Text>
+            </Col>
+            <Col span={12}>
+              <Title level={5} style={{ textAlign: "left" }}>
+                Duty assumed at current workplace:
+              </Title>
+            </Col>
+            <Col span={12}>
+              <Text>
+                {user.duty_assumed_date
+                  ? new Date(user.duty_assumed_date).toLocaleDateString()
+                  : "N/A"}
+              </Text>
+            </Col>
+            <Col span={12}>
+              <Title level={5} style={{ textAlign: "left" }}>
+                Designation:
+              </Title>
+            </Col>
+            <Col span={12}>
+              <Text>{user.designation || "N/A"}</Text>
+            </Col>
+            <Col span={12}>
+              <Title level={5} style={{ textAlign: "left" }}>
+              Class:
+              </Title>
+            </Col>
+            <Col span={12}>
+              <Text>{user.class || "N/A"}</Text>
+            </Col>
+            <Col span={12}>
+              <Title level={5} style={{ textAlign: "left" }}>
+              Service:
+              </Title>
+            </Col>
+            <Col span={12}>
+              <Text>{user.service || "N/A"}</Text>
             </Col>
           </Row>
         </div>

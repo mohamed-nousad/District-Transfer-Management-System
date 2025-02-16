@@ -219,6 +219,13 @@ const UserProfile = ({ userData }) => {
               </Option>
             </Select>
           </Form.Item>
+          <Form.Item
+            label="Designation"
+            name="designation"
+            style={{ flex: "1 1 48%" }}
+          >
+          <Input/>
+          </Form.Item>
         </div>
 
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>

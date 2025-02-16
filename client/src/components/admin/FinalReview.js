@@ -77,10 +77,9 @@ const UserProfile = ({ adminRole }) => {
           <Divider />
 
           <Row gutter={[16, 16]}>
-            <Col span={12}>
+            <Col span={10}>
               <Text></Text> <Text>{user.nameWithInitial}</Text>
-            </Col>
-            <Col span={12}>
+              <Text></Text> <Text>{user.designation}</Text>
               <Text></Text> <Text>{user.NIC}</Text>
             </Col>
           </Row>

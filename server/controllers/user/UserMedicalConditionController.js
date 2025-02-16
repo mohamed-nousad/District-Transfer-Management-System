@@ -36,7 +36,7 @@ exports.getOneMedicalCondition = async (req, res) => {
   try {
     const medicalcondition = await UserMedicalCondition.findById(req.params.id); // Find by id passed in the request
     if (!medicalcondition) {
-      return res.status(404).json({ error: "Disease not found" });
+      return res.status(404).json({ error: "MedicalConditions not found" });
     }
     res.json(medicalcondition);
   } catch (err) {

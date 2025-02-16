@@ -109,7 +109,7 @@ const Dashboard = () => {
       <Text> {profileCompletion}%</Text>
 
       {profileCompletion === 100 && (
-        <span style={{marginLeft: "10px" }}>
+        <span style={{ marginLeft: "10px" }}>
           <Badge status="success" text="Completed" />
         </span>
       )}
@@ -123,8 +123,18 @@ const Dashboard = () => {
           Refresh Progress
         </Button>
         <br />
-        <Button type="default" style={{ width: "250px" }}>
-          Apply transfer
+        <Button
+          type="default"
+          style={{ width: "250px" }}
+          onClick={() => {
+            if (!userData.isApproved) {
+              message.error("First complete your profile");
+            } else {
+              // Proceed with transfer logic
+            }
+          }}
+        >
+          Apply Transfer
         </Button>
       </div>
     </Content>
