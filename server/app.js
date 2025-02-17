@@ -21,9 +21,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: [
-      "https://district-transfer-manageme-git-fa63a5-nousads-projects-f5abc47c.vercel.app",
-    ],
+    origin: ["https://district-transfer-management-system-jado.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
