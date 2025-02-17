@@ -41,7 +41,7 @@ const LoginPage = () => {
     } catch (error) {
       console.error("Error during login:", error);
       message.error(
-        error.response?.data?.message || `Login failed. try again`
+        error.response?.data?.message || `Login failed. try again ${error}`
       );
     }
   };
