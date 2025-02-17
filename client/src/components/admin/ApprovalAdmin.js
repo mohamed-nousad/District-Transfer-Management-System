@@ -24,6 +24,7 @@ export default function CheckingAdmin() {
       dataIndex: "nameWithInitial",
       key: "name",
     },
+    { title: "Designation", dataIndex: "designation", key: "designation" },
     {
       title: "NIC",
       dataIndex: "NIC",

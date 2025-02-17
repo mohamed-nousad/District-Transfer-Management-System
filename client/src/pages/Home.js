@@ -31,71 +31,80 @@ const HomePage = () => {
   };
 
   return (
-    <Layout
-      style={{
-        minHeight: "100vh",
-        textAlign: "center",
-        backgroundImage: `url(${bg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+    <div
+      className="relative min-h-screen text-center bg-cover bg-center"
+      style={{ backgroundImage: `url(${bg})` }}
     >
-      {/* Header with Language Selector */}
-      <Header
+      <div className="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-md"></div>
+
+      <Layout
         style={{
-          background: "transparent", // Correct spelling
-          padding: "10px",
-          display: "flex",
-          justifyContent: "flex-end",
+          minHeight: "100vh",
+          textAlign: "center",
+          backgroundImage: `url(${bg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          position: "relative",
+          backdropFilter: "blur(10px)",
         }}
       >
-        <Space>
-          <GlobalOutlined style={{ color: "white", fontSize: "16px" }} />
-          <Radio.Group
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            buttonStyle="solid"
-          >
-            <Radio.Button value="ta">தமிழ்</Radio.Button>
-            <Radio.Button value="en">English</Radio.Button>
-            <Radio.Button value="si">සිංහල</Radio.Button>
-          </Radio.Group>
-        </Space>
-      </Header>
+        {/* Header with Language Selector */}
+        <Header
+          style={{
+            background: "transparent", // Correct spelling
+            padding: "10px",
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Space>
+            <GlobalOutlined style={{ color: "white", fontSize: "16px" }} />
+            <Radio.Group
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              buttonStyle="solid"
+            >
+              <Radio.Button value="ta">தமிழ்</Radio.Button>
+              <Radio.Button value="en">English</Radio.Button>
+              <Radio.Button value="si">සිංහල</Radio.Button>
+            </Radio.Group>
+          </Space>
+        </Header>
 
-      {/* Main Content */}
-      <Content
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          flexGrow: 1,
-        }}
-      >
-        <img
-          src={logo}
-          alt="logo"
-          style={{ width: "150px", marginBottom: "20px" }}
-        />
-        <Title style={{ color: "white" , fontStyle: "oblique"}} level={2}>
-          {languageData[language].title}
-        </Title>
+        {/* Main Content */}
+        <Content
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            flexGrow: 1,
+          }}
+        >
+          <img
+            src={logo}
+            alt="logo"
+            style={{ width: "150px", marginBottom: "20px" }}
+          />
+          <Title style={{ color: "white" }} level={2}>
+            {languageData[language].title}
+          </Title>
 
-        {/* Buttons Section */}
-        <Space size="large">
-          <Link to="/login">
-            <Button type="primary" size="large">
-              {languageData[language].loginButton}
-            </Button>
-          </Link>
-          <Link to="/admin_login">
-            <Button type="dashed" size="large">
-              {languageData[language].adminLoginButton}
-            </Button>
-          </Link>
-        </Space>
-      </Content>
-    </Layout>
+          {/* Buttons Section */}
+          <Space size="large">
+            <Link to="/login">
+              <Button type="primary" size="large">
+                {languageData[language].loginButton}
+              </Button>
+            </Link>
+            <Link to="/admin_login">
+              <Button type="dashed" size="large">
+                {languageData[language].adminLoginButton}
+              </Button>
+            </Link>
+          </Space>
+        </Content>
+      </Layout>
+    </div>
   );
 };
 

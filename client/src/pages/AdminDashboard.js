@@ -1,11 +1,12 @@
 import React from "react";
-import { Layout, Spin } from "antd";
+import { Layout, Spin, Typography } from "antd";
 import ApprovalAdmin from "../components/admin/ApprovalAdmin";
 import CheckingAdmin from "../components/admin/CheckingAdmin";
 import RecommendAdmin from "../components/admin/RecommendAdmin";
 import useCheckAdminAuth from "../utils/checkAdminAuth";
 
 const { Content } = Layout;
+const { Title, Text } = Typography;
 
 const AdminDashboard = () => {
   const { adminRole, loading } = useCheckAdminAuth();
@@ -36,6 +37,26 @@ const AdminDashboard = () => {
         textAlign: "center",
       }}
     >
+      <Title level={3} style={{ marginBottom: 10 }}>
+        Welcome,{" "}
+        {adminRole === "checkingAdmin"
+          ? "Checking Admin"
+          : adminRole === "recommendAdmin"
+          ? "Recommend Admin"
+          : adminRole === "approveAdmin"
+          ? "Approve Admin"
+          : "Admin"}
+      </Title>
+      <Text className="bg-green-200 text-sm px-4 py-1">
+        <strong>Admin Role: </strong>
+        {adminRole === "checkingAdmin"
+          ? "Checking Admin"
+          : adminRole === "recommendAdmin"
+          ? "Recommend Admin"
+          : adminRole === "approveAdmin"
+          ? "Approve Admin"
+          : "Admin"}
+      </Text>
       {adminRole === "approveAdmin" ? (
         <ApprovalAdmin />
       ) : adminRole === "recommendAdmin" ? (
@@ -43,8 +64,6 @@ const AdminDashboard = () => {
       ) : (
         <CheckingAdmin />
       )}
-
-      <h2 style={{ margin: 0 }}>Welcome, {adminRole || "Admin"}!</h2>
     </Content>
   );
 };

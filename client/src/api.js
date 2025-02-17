@@ -22,7 +22,11 @@ export const apiRequest = async (method, endpoint, data = {}, token = "") => {
   }
 };
 
-export const createMedicalCondition = (data, token) => apiRequest("POST", "/user/medicalcondition", data, token);
-export const getMedicalCondition = (id, token) => apiRequest("GET", `/user/medicalcondition/${id}`, {}, token);
-export const updateMedicalCondition = (id, data, token) => apiRequest("PUT", `/user/medicalcondition/${id}`, data, token);
-export const deleteMedicalCondition = (id, token) => apiRequest("DELETE", `/user/medicalcondition/${id}`, {}, token);
+export const createMedicalCondition = (data, token) =>
+  apiRequest("POST", "/user/medicalcondition", data, token);
+export const getMedicalCondition = (id, token) =>
+  apiRequest("GET", `/user/medicalcondition/${id}`, {}, token);
+export const updateMedicalCondition = (id, data, token) =>
+  apiRequest("PUT", `/user/medicalcondition/${id}`, data, token);
+export const deleteMedicalCondition = (id, token) =>
+  apiRequest("DELETE", `/user/medicalcondition/${id}`, {}, token);
