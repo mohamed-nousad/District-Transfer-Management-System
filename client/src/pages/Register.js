@@ -31,12 +31,12 @@ const Register = () => {
       message.error(err.response?.data?.message || "Registration failed.");
     }
   };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4 sm:p-10">
       <Header />
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-3/4 md:w-1/2 lg:w-2/5">
-        <h1 className="text-3xl font-semibold text-gray-700 text-center mb-6">
+
+      <div className="bg-white p-6 sm:p-8 md:p-10 rounded-lg shadow-lg w-full max-w-2xl">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-gray-700 text-center mb-6">
           Register
         </h1>
 
@@ -48,8 +48,8 @@ const Register = () => {
         )}
 
         <Form layout="vertical" onFinish={handleSubmit}>
-          <Row gutter={16}>
-            <Col span={12}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 label="First Name"
                 name="firstName"
@@ -58,7 +58,7 @@ const Register = () => {
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 label="Last Name"
                 name="lastName"
@@ -69,8 +69,8 @@ const Register = () => {
             </Col>
           </Row>
 
-          <Row gutter={16}>
-            <Col span={12}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 label="Name with Initial"
                 name="nameWithInitial"
@@ -79,7 +79,7 @@ const Register = () => {
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 label="NIC"
                 name="NIC"
@@ -90,8 +90,8 @@ const Register = () => {
             </Col>
           </Row>
 
-          <Row gutter={16}>
-            <Col span={12}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 label="Gender"
                 name="gender"
@@ -103,7 +103,7 @@ const Register = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 label="Date of Birth"
                 name="dateOfBirth"
@@ -114,8 +114,8 @@ const Register = () => {
             </Col>
           </Row>
 
-          <Row gutter={16}>
-            <Col span={12}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24}>
               <Form.Item
                 label="Address"
                 name="address"
@@ -124,11 +124,14 @@ const Register = () => {
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={12}>
+          </Row>
+
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 label="Workplace"
                 name="workplace"
-                rules={[{ required: true, message: "Workplace Required" }]}
+                rules={[{ required: true, message: "Required" }]}
               >
                 <Select>
                   <Select.Option value="District Secretariat, Ampara">
@@ -170,6 +173,9 @@ const Register = () => {
                   <Option value="Divisional Secretariat, Ninthavur">
                     Divisional Secretariat, Ninthavur
                   </Option>
+                  <Option value="Divisional Secretariat, Navithanveli">
+                    Divisional Secretariat, Navithanveli
+                  </Option>
                   <Option value="Divisional Secretariat, Addalachchenai">
                     Divisional Secretariat, Addalachchenai
                   </Option>
@@ -194,10 +200,7 @@ const Register = () => {
                 </Select>
               </Form.Item>
             </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 label="Email (optional)"
                 name="email"
@@ -206,7 +209,10 @@ const Register = () => {
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={12}>
+          </Row>
+
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 label="Contact Number"
                 name="contactNumber"
@@ -215,10 +221,7 @@ const Register = () => {
                 <Input />
               </Form.Item>
             </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 label="Password"
                 name="password"

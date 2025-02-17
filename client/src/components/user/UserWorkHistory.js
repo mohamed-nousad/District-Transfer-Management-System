@@ -33,7 +33,9 @@ const UserWorkHistory = ({ userData }) => {
       );
       setWorkhistories(response.data || []);
     } catch (error) {
-      message.error("Failed to fetch workhistories");
+      message.error(
+        error.response?.data?.error || "Failed to fetch workhistories"
+      );
     } finally {
       setLoading(false);
     }
@@ -116,8 +118,12 @@ const UserWorkHistory = ({ userData }) => {
           >
             <Select>
               <Option value="District Secretariat">District Secretariat</Option>
-              <Option value="Divisional Secretariat">Divisional Secretariat</Option>
-              <Option value="Ministry / Department">Ministry / Department</Option>
+              <Option value="Divisional Secretariat">
+                Divisional Secretariat
+              </Option>
+              <Option value="Ministry / Department">
+                Ministry / Department
+              </Option>
             </Select>
           </Form.Item>
 
@@ -171,13 +177,13 @@ const UserWorkHistory = ({ userData }) => {
           {loading ? <Spin /> : "Save"}
         </Button>
       </Form>
-      <h2 style={{ marginTop: 30 }}>Medical Conditions</h2>
+      <h2 style={{ marginTop: 30 }}>Work Hoistories</h2>
       <Table
         dataSource={workhistories}
         columns={columns}
         rowKey="id"
         loading={loading}
-        responsive
+        scroll={{ x: "max-content" }}
       />
     </div>
   );

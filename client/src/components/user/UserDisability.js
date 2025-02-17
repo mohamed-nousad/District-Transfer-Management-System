@@ -146,7 +146,7 @@ const UserDisability = ({ userData }) => {
         columns={columns}
         rowKey="id"
         loading={loading}
-        responsive
+        scroll={{ x: "max-content" }}
       />
     </div>
   );
