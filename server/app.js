@@ -21,7 +21,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://district-transfer-management-system-te19.vercel.app",
     credentials: true,
   })
 );
