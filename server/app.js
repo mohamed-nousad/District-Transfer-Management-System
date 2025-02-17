@@ -53,7 +53,7 @@ app.use((err, req, res, next) => {
 });
 
 // Error Handling
-app.get("/",(req, res) => {
+app.get("/auth/login",(req, res) => {
   res.json("Welcome");
 });
 
