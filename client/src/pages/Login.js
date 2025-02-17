@@ -30,7 +30,7 @@ const LoginPage = () => {
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/login`,
+        "https://district-transfer-management-system-te19.vercel.app/auth/login",
         values
       );
       if (response.status === 200) {
@@ -40,9 +40,7 @@ const LoginPage = () => {
       }
     } catch (error) {
       console.error("Error during login:", error);
-      message.error(
-        error.response?.data?.message || `Login failed. try again ${error}`
-      );
+      message.error(error.response?.data?.message || `Login failed. try again`);
     }
   };
 
