@@ -30,7 +30,7 @@ const LoginPage = () => {
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post(
-        "https://district-transfer-management-system-te19.vercel.app/auth/login",
+        `${process.env.REACT_APP_API_URL}/auth/login`,
         values
       );
       if (response.status === 200) {

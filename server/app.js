@@ -52,9 +52,4 @@ app.use((err, req, res, next) => {
     .json({ message: "Internal Server Error", error: err.message });
 });
 
-// Error Handling
-app.get("/",(req, res) => {
-  res.json("Welcome");
-});
-
 module.exports = app;

@@ -48,7 +48,7 @@ const AdminLogin = () => {
 
     try {
       const res = await axios.post(
-        "https://district-transfer-management-system-te19.vercel.app/auth/admin/login",
+        `${process.env.REACT_APP_API_URL}/auth/admin/login`,
         { adminId: values.adminId, password: values.password },
         { withCredentials: true }
       );
