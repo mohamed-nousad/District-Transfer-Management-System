@@ -22,7 +22,7 @@ const HeaderBar = () => {
   const menu = (
     <Menu>
       <Menu.Item key="1" icon={<ProfileOutlined />}>
-        <Link to="/dashboard/update-profile">Profile</Link>
+        <Link to="/dashboard/update-profile">Basic details</Link>
       </Menu.Item>     
       <Menu.Item key="2" icon={<LogoutOutlined />} onClick={handleLogout}>
         Logout

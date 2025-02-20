@@ -134,7 +134,7 @@ const UpdateProfile = () => {
   return (
     <>
       {/* Toggle Button for Mobile View */}
-      {screens.sm || screens.xs ? (
+      {(screens.sm || screens.xs) && (
         <Button
           type="primary"
           icon={<MenuOutlined />}
@@ -150,19 +150,16 @@ const UpdateProfile = () => {
             backgroundColor: "#1890ff",
           }}
         />
-      ) : null}
+      )}
 
-      {/* Sidebar for larger screens */}
-      {!screens.sm && !screens.xs && (
+      {/* Sidebar for Larger Screens */}
+      {!(screens.sm || screens.xs) && (
         <Sider width={250}>
           <Menu
             mode="inline"
-            defaultSelectedKeys={[currentSection]}
+            selectedKeys={[currentSection]}
             style={{ height: "100%", borderRight: 0, padding: "15px" }}
-            onClick={({ key }) => {
-              setCurrentSection(key);
-              closeDrawer(); // Close the sidebar on section click
-            }}
+            onClick={({ key }) => setCurrentSection(key)}
           >
             {sections.map((section) => (
               <Menu.Item key={section.key} icon={<UserOutlined />}>
@@ -174,31 +171,29 @@ const UpdateProfile = () => {
       )}
 
       {/* Drawer for Mobile View */}
-      {drawerVisible && (
-        <Drawer
-          title="Menu"
-          placement="left"
-          closable={false}
-          onClose={closeDrawer}
-          visible={drawerVisible}
+      <Drawer
+        title="Menu"
+        placement="left"
+        closable
+        onClose={closeDrawer}
+        open={drawerVisible} // Updated from 'visible'
+      >
+        <Menu
+          mode="inline"
+          selectedKeys={[currentSection]}
+          onClick={({ key }) => {
+            setCurrentSection(key);
+            closeDrawer();
+           
+          }}
         >
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={[currentSection]}
-            style={{ height: "100%", borderRight: 0, padding: "15px" }}
-            onClick={({ key }) => {
-              setCurrentSection(key);
-              closeDrawer(); // Close the drawer when a section is clicked
-            }}
-          >
-            {sections.map((section) => (
-              <Menu.Item key={section.key} icon={<UserOutlined />}>
-                {section.label}
-              </Menu.Item>
-            ))}
-          </Menu>
-        </Drawer>
-      )}
+          {sections.map((section) => (
+            <Menu.Item key={section.key} icon={<UserOutlined />}>
+              {section.label}
+            </Menu.Item>
+          ))}
+        </Menu>
+      </Drawer>
 
       {/* Main Content */}
       <Content

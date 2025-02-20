@@ -42,7 +42,6 @@ const Dashboard = () => {
         )
         .then((response) => {
           setProfileCompletion(response.data.progress); // Ensure correct response property
-          message.success(response.data.message || "Progress updated!");
         })
         .catch(() => message.error("Failed to update progress"));
     }
