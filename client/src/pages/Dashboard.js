@@ -25,7 +25,10 @@ const Dashboard = () => {
         .get(
           `${process.env.REACT_APP_API_URL}/user/user/progress/${userData.id}`
         )
-        .then((response) => setProfileCompletion(response.data.progress))
+        .then((response) => {
+          setProfileCompletion(response.data.progress);
+          handleRefresh();
+        })
         .catch(() => message.error("Failed to fetch progress"));
     }
   }, [userData]);
@@ -103,7 +106,7 @@ const Dashboard = () => {
             ? "#2196F3"
             : "#4CAF50"
         }
-        style={{ width: "80%", margin: "20px auto" }}
+        style={{ width: "20%", margin: "20px auto" }}
       />
 
       <Text> {profileCompletion}%</Text>
@@ -117,14 +120,6 @@ const Dashboard = () => {
       <div style={{ marginTop: "20px" }}>
         <Button
           type="primary"
-          style={{ marginBottom: "10px", width: "250px" }}
-          onClick={handleRefresh}
-        >
-          Refresh Progress
-        </Button>
-        <br />
-        <Button
-          type="default"
           style={{ width: "250px" }}
           onClick={() => {
             if (!userData.isApproved) {

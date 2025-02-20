@@ -159,7 +159,10 @@ const UpdateProfile = () => {
             mode="inline"
             defaultSelectedKeys={[currentSection]}
             style={{ height: "100%", borderRight: 0, padding: "15px" }}
-            onClick={({ key }) => setCurrentSection(key)}
+            onClick={({ key }) => {
+              setCurrentSection(key);
+              closeDrawer(); // Close the sidebar on section click
+            }}
           >
             {sections.map((section) => (
               <Menu.Item key={section.key} icon={<UserOutlined />}>
@@ -170,32 +173,32 @@ const UpdateProfile = () => {
         </Sider>
       )}
 
-      {/* Drawer for mobile/tablet screens */}
-      <Drawer
-        title="Menu"
-        placement="left"
-        onClose={closeDrawer}
-        visible={drawerVisible}
-        width={250}
-      >
-        <Menu
-          mode="inline"
-          defaultSelectedKeys={[currentSection]}
-          style={{
-            height: "100%",
-            borderRight: 0,
-            padding: "15px",
-            backgroundColor: "#fff",
-          }}
-          onClick={({ key }) => setCurrentSection(key)}
+      {/* Drawer for Mobile View */}
+      {drawerVisible && (
+        <Drawer
+          title="Menu"
+          placement="left"
+          closable={false}
+          onClose={closeDrawer}
+          visible={drawerVisible}
         >
-          {sections.map((section) => (
-            <Menu.Item key={section.key} icon={<UserOutlined />}>
-              {section.label}
-            </Menu.Item>
-          ))}
-        </Menu>
-      </Drawer>
+          <Menu
+            mode="inline"
+            defaultSelectedKeys={[currentSection]}
+            style={{ height: "100%", borderRight: 0, padding: "15px" }}
+            onClick={({ key }) => {
+              setCurrentSection(key);
+              closeDrawer(); // Close the drawer when a section is clicked
+            }}
+          >
+            {sections.map((section) => (
+              <Menu.Item key={section.key} icon={<UserOutlined />}>
+                {section.label}
+              </Menu.Item>
+            ))}
+          </Menu>
+        </Drawer>
+      )}
 
       {/* Main Content */}
       <Content
@@ -233,7 +236,7 @@ const UpdateProfile = () => {
               ? "Your data is invalid, please resubmit"
               : user.isSubmited
               ? "Your data submitted, please wait for the approval"
-              : "To complete your profile, fill all forms and submit"
+              : "Your profile is not submitted, Please submit."
           }
           type={
             user.isApproved
