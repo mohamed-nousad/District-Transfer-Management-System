@@ -99,11 +99,10 @@ const UserMedicalCondition = ({ userData }) => {
             style={{ flex: "1 1 48%" }}
             rules={[
               { required: true, message: "This field is required" },
-              { min: 40, message: "Minimum length is 40 characters" },
-              { max: 100, message: "Maximum length is 100 characters" },
+              { max: 300, message: "Maximum length is 300 characters" },
             ]}
           >
-            <TextArea />
+            <TextArea placeholder="Enter your notes (Max 300 characters)" />
           </Form.Item>
         </div>
         <Button type="primary" htmlType="submit" block disabled={loading}>
