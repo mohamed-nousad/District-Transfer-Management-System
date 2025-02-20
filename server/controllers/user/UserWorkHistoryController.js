@@ -58,9 +58,7 @@ exports.getUserWorkHistories = async (req, res) => {
       userId: req.params.userId,
     }); // Find all by userId
     if (!workhistories.length) {
-      return res
-        .status(404)
-        .json({ error: "No work histories found for this user" });
+      return res.status(404).json({ error: "You have no work histories" });
     }
     res.json(workhistories);
   } catch (err) {
