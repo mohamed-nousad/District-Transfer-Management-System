@@ -22,7 +22,7 @@ const useCheckUserAuth = () => {
       const decodedToken = jwtDecode(token);
 
       if (decodedToken.exp * 1000 < Date.now()) {
-        message.error("Token expired. Please re-login");
+        message.error("Session expired, Please relogin!");
         localStorage.removeItem("token");
         navigate("/login");
       } else {

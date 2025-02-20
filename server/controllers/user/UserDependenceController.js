@@ -19,7 +19,9 @@ exports.createDependence = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
 
   // Check if NIC already exists
-  const existingDependentNIC = await UserDependence.findOne({ dependentNIC: req.body.dependentNIC });
+  const existingDependentNIC = await UserDependence.findOne({
+    dependentNIC: req.body.dependentNIC,
+  });
   if (existingDependentNIC) {
     return res.status(400).json({ error: "Dependent NIC is already in use" });
   }
@@ -60,9 +62,7 @@ exports.getUserDependences = async (req, res) => {
       userId: req.params.userId,
     }); // Find all by userId
     if (!dependences.length) {
-      return res
-        .status(404)
-        .json({ error: "No dependences found for this user" });
+      return res.status(404).json({ error: "You have no dependences" });
     }
     res.json(dependences);
   } catch (err) {

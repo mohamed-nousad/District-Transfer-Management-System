@@ -49,9 +49,7 @@ exports.getUserDisabilities = async (req, res) => {
       userId: req.params.userId,
     }); // Find all by userId
     if (!disabilities.length) {
-      return res
-        .status(404)
-        .json({ error: "No disabilities found for this user" });
+      return res.status(404).json({ error: "You have no disabilities" });
     }
     res.json(disabilities);
   } catch (err) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , Link} from "react-router-dom";
 import Header from "../components/Header";
 import { jwtDecode } from "jwt-decode";
 import {
@@ -115,13 +115,15 @@ const AdminLogin = () => {
             />
           </Form.Item>
 
-          <Form.Item name="remember" valuePropName="checked">
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-
           <Button type="primary" htmlType="submit" block loading={loading}>
             {loading ? "Logging in..." : "Login"}
           </Button>
+          <p className="text-sm text-gray-600 mt-4">
+            Are you a normal user?{" "}
+            <Link to="/login" className="text-blue-600 hover:underline">
+              Login
+            </Link>
+          </p>
         </Form>
       </Card>
     </div>
