@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Menu, Drawer, Button , Form , Input} from "antd";
+import { Modal, Menu, Drawer, Button, Form, Input } from "antd";
 import {
   LockOutlined,
   UserOutlined,
@@ -7,6 +7,8 @@ import {
   MenuOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+
+const { SubMenu } = Menu;
 
 const Sidebar = () => {
   const [visible, setVisible] = useState(false);
@@ -60,20 +62,23 @@ const Sidebar = () => {
           <Menu.Item key="1" icon={<UserOutlined />}>
             <Link to="/dashboard">Dashboard</Link>
           </Menu.Item>
-          <Menu.Item key="2" icon={<SettingOutlined />}>
-            <Link to="/settings">Settings</Link>
-          </Menu.Item>
-          <Menu.Item key="3" icon={<LockOutlined />} onClick={showModal}>
-            Change Password
-          </Menu.Item>
-        </Menu>
 
+          <SubMenu key="2" icon={<SettingOutlined />} title="Settings">
+            <Menu.Item key="2-1">
+              <Link to="/settings">General Settings</Link>
+            </Menu.Item>
+            <Menu.Item key="2-2" icon={<LockOutlined />} onClick={showModal}>
+              Change Password
+            </Menu.Item>
+          </SubMenu>
+        </Menu>
         {/* Change Password Modal */}
         <Modal
           title="Change Password"
           open={isModalVisible}
           onCancel={handleCancel}
           footer={null}
+          width={window.innerWidth < 768 ? "90%" : 500} // Responsive width
         >
           <Form layout="vertical" onFinish={handleChangePassword}>
             <Form.Item

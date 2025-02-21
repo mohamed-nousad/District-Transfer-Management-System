@@ -101,7 +101,7 @@ const UserProfile = ({ userData }) => {
             <Input />
           </Form.Item>
           <Form.Item
-            label="Last Name"
+            label="Name denoted by Initials"
             name="lastName"
             style={{ flex: "1 1 48%" }}
           >
@@ -234,26 +234,10 @@ const UserProfile = ({ userData }) => {
             name="duty_assumed_date"
             style={{ flex: "1 1 48%" }}
           >
-            <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+            <DatePicker type="date" style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item label="City" name="city" style={{ flex: "1 1 48%" }}>
-            <Select>
-              <Option value="kalmunai">Kalmunai</Option>
-              <Option value="maruthamunai">Maruthamunai</Option>
-              <Option value="sammanthurai">Sammanthurai</Option>
-              <Option value="sainthamaruthu">Sainthamaruthu</Option>
-              <Option value="akkaraipaththu">Akkaraipaththu</Option>
-              <Option value="addalachchenai">Addalachchenai</Option>
-              <Option value="lahugala">Lahugala</Option>
-              <Option value="irakkamam">Irakkamam</Option>
-              <Option value="ninthavur">Ninthavur</Option>
-              <Option value="pothuvil">Pothuvil</Option>
-              <Option value="thirukkovil">Thirukkovil</Option>
-              <Option value="dehiaththakandiya">Dehiaththakandiya</Option>
-              <Option value="alavidivembu">Alayadivembu</Option>
-              <Option value="damana">Damana</Option>
-              <Option value="uhana">Uhana</Option>
-            </Select>
+            <Input />
           </Form.Item>
         </div>
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
@@ -291,8 +275,9 @@ const UserProfile = ({ userData }) => {
           </Form.Item>
           <Form.Item label="Class" name="class" style={{ flex: "1 1 48%" }}>
             <Select>
-              <Option value="1st class">1st Class</Option>
-              <Option value="2nd class">2nd Class</Option>
+              <Option value="Class I">Class I </Option>
+              <Option value="Class II">Class II </Option>
+              <Option value="Class III">Class III </Option>
             </Select>
           </Form.Item>
         </div>
