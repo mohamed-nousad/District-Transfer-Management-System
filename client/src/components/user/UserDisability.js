@@ -4,7 +4,7 @@ import { Form, Select, Input, Button, message, Spin, Table } from "antd";
 import moment from "moment";
 const { Option } = Select;
 
-const UserDisability = ({ userData }) => {
+const UserDisability = ({ user }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [showYears, setShowYears] = useState(false);
@@ -20,7 +20,7 @@ const UserDisability = ({ userData }) => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/user/disability/user/${userData.id}`,
+        `${process.env.REACT_APP_API_URL}/user/disability/user/${user._id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setDisabilities(response.data || []);
@@ -39,7 +39,7 @@ const UserDisability = ({ userData }) => {
       const token = localStorage.getItem("token");
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/user/disability`,
-        { ...values, userId: userData.id }, // Include userId
+        { ...values, userId: user._id }, // Include userId
         { headers: { Authorization: `Bearer ${token}` } }
       );
       message.success(response.data.message || "Disability added successfully");

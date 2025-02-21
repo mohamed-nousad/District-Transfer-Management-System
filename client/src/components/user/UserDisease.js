@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Form, Select, DatePicker, Button, message, Spin, Table } from "antd";
+import { Form, Select, DatePicker, Button, message, Spin, Table, Checkbox } from "antd";
 import moment from "moment";
 
 const { Option } = Select;
 
-const UserDisability = ({ userData }) => {
+const UserDisability = ({ user }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [TreatmentDate, setTreatmentDate] = useState(false);
   const [diseases, setDiseases] = useState([]);
+  const [checkboxChecked, setCheckboxChecked] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  
+    const currentProgressValue = user.progressValue || 0; // Default to 0 if no value exists
 
   useEffect(() => {
     fetchDiseases();
@@ -20,7 +24,7 @@ const UserDisability = ({ userData }) => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/user/disease/user/${userData.id}`,
+        `${process.env.REACT_APP_API_URL}/user/disease/user/${user._id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setDiseases(response.data || []);
@@ -37,7 +41,7 @@ const UserDisability = ({ userData }) => {
       const token = localStorage.getItem("token");
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/user/disease`,
-        { ...values, userId: userData.id }, // Include userId
+        { ...values, userId: user._id }, // Include userId
         { headers: { Authorization: `Bearer ${token}` } }
       );
       message.success(response.data.message || "Disease added successfully");

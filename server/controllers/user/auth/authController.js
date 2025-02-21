@@ -121,7 +121,6 @@ const loginUser = async (req, res) => {
       user: {
         nameWithInitial: user.nameWithInitial,
         NIC: user.NIC,
-        isSubmited: user.isSubmited,
       },
     });
   } catch (error) {
