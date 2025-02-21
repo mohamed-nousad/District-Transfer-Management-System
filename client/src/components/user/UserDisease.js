@@ -82,7 +82,7 @@ const UserDisability = ({ userData }) => {
             label="Disease Type"
             name="type"
             style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "This field is required" }]}
           >
             <Select onChange={(value) => setTreatmentDate(value === "false")}>
               <Option value="Heart Disease">Heart Disease</Option>
@@ -98,7 +98,7 @@ const UserDisability = ({ userData }) => {
             label="Are you currently obtaining treatement?"
             name="are_you_taking_treatment"
             style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "This field is required" }]}
           >
             <Select onChange={(value) => setTreatmentDate(value === "true")}>
               <Option value="false">No</Option>

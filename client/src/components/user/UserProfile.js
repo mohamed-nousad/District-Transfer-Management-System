@@ -224,7 +224,7 @@ const UserProfile = ({ userData }) => {
             name="designation"
             style={{ flex: "1 1 48%" }}
           >
-          <Input/>
+            <Input />
           </Form.Item>
         </div>
 
@@ -259,8 +259,34 @@ const UserProfile = ({ userData }) => {
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
           <Form.Item label="Service" name="service" style={{ flex: "1 1 48%" }}>
             <Select>
-              <Option value="1st service">1st service</Option>
-              <Option value="2nd service">2nd service</Option>
+              <Option value="kalmunai">Sri Lanka Administrative Service</Option>
+              <Option value="maruthamunai">
+                Sri Lanka Engineering Service
+              </Option>
+              <Option value="sammanthurai">
+                Sri Lanka Accountants' Service
+              </Option>
+              <Option value="sainthamaruthu">Sri Lanka Planning Service</Option>
+              <Option value="akkaraipaththu">
+                Sri Lanka Scientific Service
+              </Option>
+              <Option value="addalachchenai">
+                Sri Lanka Architectural Service
+              </Option>
+              <Option value="lahugala">
+                Sri Lanka Information & Communication Technology Service
+              </Option>
+              <Option value="irakkamam">Government Translators’ Service</Option>
+              <Option value="ninthavur">Sri Lanka Librarians’ Service</Option>
+              <Option value="pothuvil">Development Officers' Service</Option>
+              <Option value="thirukkovil">
+                Management Service Officers’ Service
+              </Option>
+              <Option value="dehiaththakandiya">
+                Combined Drivers’ Service
+              </Option>
+              <Option value="alavidivembu">Office Employees’ Service</Option>
+              <Option value="damana">Sri Lanka Technological Service</Option>
             </Select>
           </Form.Item>
           <Form.Item label="Class" name="class" style={{ flex: "1 1 48%" }}>

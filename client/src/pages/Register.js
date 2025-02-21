@@ -72,7 +72,7 @@ const Register = () => {
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Name with Initial"
+                label="Name denoted by Initials "
                 name="nameWithInitial"
                 rules={[{ required: true, message: "Required" }]}
               >

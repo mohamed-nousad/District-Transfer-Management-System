@@ -51,7 +51,7 @@ exports.getUserDiseases = async (req, res) => {
   try {
     const diseases = await UserDisease.find({ userId: req.params.userId }); // Find all by userId
     if (!diseases.length) {
-      return res.status(404).json({ error: "No diseases found for this user" });
+      return res.status(404).json({ error: "You have no diseases" });
     }
     res.json(diseases);
   } catch (err) {

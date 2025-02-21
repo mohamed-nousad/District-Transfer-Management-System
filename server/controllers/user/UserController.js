@@ -104,7 +104,7 @@ exports.updateProfileProgress = async (req, res) => {
   // Update user's progress value
   await User.findByIdAndUpdate(userId, { progressValue: progress });
 
-  res.json({ message: "Profile updated successfully", progress });
+  res.json({ message: "Progress updated!", progress });
 };
 
 // Get  User using id

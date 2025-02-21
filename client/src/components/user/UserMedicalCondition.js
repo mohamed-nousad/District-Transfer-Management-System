@@ -25,7 +25,9 @@ const UserMedicalCondition = ({ userData }) => {
       );
       setConditions(response.data || []);
     } catch (error) {
-      message.error("Failed to fetch medical conditions");
+      message.error(
+        error.response?.data?.error || "Failed to fetch medical conditions"
+      );
     } finally {
       setLoading(false);
     }
@@ -82,11 +84,11 @@ const UserMedicalCondition = ({ userData }) => {
             label="Medical Condition Type"
             name="type"
             style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "This field is required" }]}
           >
             <Select>
               <Option value="Pregnancy">Pregnancy</Option>
-              <Option value="Teraphy">Teraphy</Option>
+              <Option value="Teraphy">Theraphy</Option>
               <Option value="Other">Other</Option>
             </Select>
           </Form.Item>
@@ -95,11 +97,12 @@ const UserMedicalCondition = ({ userData }) => {
             label="Notes"
             name="notes"
             style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: "This field is required" },
+              { max: 300, message: "Maximum length is 300 characters" },
+            ]}
           >
-            <TextArea rows={4} rules={[{ required: true }]} />
-            <br />
-            <br />
+            <TextArea placeholder="Enter your notes (Max 300 characters)" />
           </Form.Item>
         </div>
         <Button type="primary" htmlType="submit" block disabled={loading}>

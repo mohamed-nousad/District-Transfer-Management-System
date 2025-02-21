@@ -113,7 +113,7 @@ const Dependence = ({ userData }) => {
             label="Dependent Name"
             name="dependentName"
             style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "This field is required" }]}
           >
             <Input />
           </Form.Item>
@@ -123,7 +123,7 @@ const Dependence = ({ userData }) => {
             label="Dependent Relationship"
             name="dependentRelationship"
             style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "This field is required" }]}
           >
             <Select>
               <Option value="Husbend">Husbend</Option>
@@ -158,7 +158,7 @@ const Dependence = ({ userData }) => {
             label="Gender"
             name="gender"
             style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "This field is required" }]}
           >
             <Select>
               <Option value="Male">Male</Option>
@@ -171,7 +171,7 @@ const Dependence = ({ userData }) => {
             label="Dependent DOB"
             name="dependent_DOB"
             style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "This field is required" }]}
           >
             <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
           </Form.Item>
@@ -189,7 +189,6 @@ const Dependence = ({ userData }) => {
             label="School / Workplace City  (optional)"
             name="city"
             style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
@@ -198,7 +197,6 @@ const Dependence = ({ userData }) => {
             label="School / Workplace Postalcode  (optional)"
             name="postalcode"
             style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
