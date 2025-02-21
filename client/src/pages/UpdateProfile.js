@@ -134,7 +134,7 @@ const UpdateProfile = () => {
   return (
     <>
       {/* Toggle Button for Mobile View */}
-      {screens.sm || screens.xs ? (
+      {(screens.sm || screens.xs) && (
         <Button
           type="primary"
           icon={<MenuOutlined />}
@@ -150,14 +150,14 @@ const UpdateProfile = () => {
             backgroundColor: "#1890ff",
           }}
         />
-      ) : null}
+      )}
 
-      {/* Sidebar for larger screens */}
-      {!screens.sm && !screens.xs && (
+      {/* Sidebar for Larger Screens */}
+      {!(screens.sm || screens.xs) && (
         <Sider width={250}>
           <Menu
             mode="inline"
-            defaultSelectedKeys={[currentSection]}
+            selectedKeys={[currentSection]}
             style={{ height: "100%", borderRight: 0, padding: "15px" }}
             onClick={({ key }) => setCurrentSection(key)}
           >
@@ -170,24 +170,22 @@ const UpdateProfile = () => {
         </Sider>
       )}
 
-      {/* Drawer for mobile/tablet screens */}
+      {/* Drawer for Mobile View */}
       <Drawer
         title="Menu"
         placement="left"
+        closable
         onClose={closeDrawer}
-        visible={drawerVisible}
-        width={250}
+        open={drawerVisible} // Updated from 'visible'
       >
         <Menu
           mode="inline"
-          defaultSelectedKeys={[currentSection]}
-          style={{
-            height: "100%",
-            borderRight: 0,
-            padding: "15px",
-            backgroundColor: "#fff",
+          selectedKeys={[currentSection]}
+          onClick={({ key }) => {
+            setCurrentSection(key);
+            closeDrawer();
+           
           }}
-          onClick={({ key }) => setCurrentSection(key)}
         >
           {sections.map((section) => (
             <Menu.Item key={section.key} icon={<UserOutlined />}>
@@ -233,7 +231,7 @@ const UpdateProfile = () => {
               ? "Your data is invalid, please resubmit"
               : user.isSubmited
               ? "Your data submitted, please wait for the approval"
-              : "To complete your profile, fill all forms and submit"
+              : "Your profile is not submitted, Please submit."
           }
           type={
             user.isApproved

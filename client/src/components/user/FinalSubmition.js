@@ -60,7 +60,6 @@ const FinalSubmissionPage = ({ userData, user }) => {
       <Paragraph>
         Before submitting, please review and accept the Terms & Conditions.
         <br></br>
-        <sapn className="text-red-700">you can submit only once !</sapn>
       </Paragraph>
 
       <Form layout="vertical" onFinish={onFinish}>
@@ -71,7 +70,7 @@ const FinalSubmissionPage = ({ userData, user }) => {
         >
           {!user.isSubmited && (
             <Checkbox onChange={handleTermsChange}>
-              I have read and accept the <a href="/terms">Terms & Conditions</a>
+              I hereby confirm that my details are correct and according to my knowledge. <a href="/terms" className="text-blue-500">Terms & Conditions</a>
               .
             </Checkbox>
           )}

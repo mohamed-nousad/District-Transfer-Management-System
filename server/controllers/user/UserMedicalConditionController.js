@@ -51,9 +51,7 @@ exports.getUserMedicalConditions = async (req, res) => {
       userId: req.params.userId,
     }); // Find all by userId
     if (!medicalconditions.length) {
-      return res
-        .status(404)
-        .json({ error: "No medicalconditions found for this user" });
+      return res.status(404).json({ error: "You have no medical conditions" });
     }
     res.json(medicalconditions);
   } catch (err) {

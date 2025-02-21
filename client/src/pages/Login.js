@@ -79,10 +79,6 @@ const LoginPage = () => {
             <Input.Password className="w-full p-2 border border-gray-300 rounded-md" />
           </Form.Item>
 
-          <Form.Item name="remember" valuePropName="checked">
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-
           <Form.Item>
             <Button type="primary" htmlType="submit" className="w-full">
               Login
