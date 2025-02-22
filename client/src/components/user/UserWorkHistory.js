@@ -23,8 +23,6 @@ const UserWorkHistory = ({ user }) => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
 
-  const currentProgressValue = user.progressValue || 0; // Default to 0 if no value exists
-
   // Fetch work histories with useCallback
   const fetchWorkHistories = useCallback(async () => {
     try {
@@ -46,28 +44,35 @@ const UserWorkHistory = ({ user }) => {
 
   useEffect(() => {
     fetchWorkHistories();
-  }, [fetchWorkHistories]); // Include fetchWorkHistories in the dependency array
+  }, []); // Include fetchWorkHistories in the dependency array
 
   const handleConfirm = async () => {
     setConfirmVisible(false);
     UpdateProgressValue();
   };
 
-  const UpdateProgressValue = async () => {
-    try {
-      setLoading(true);
-      const updatedData = { progressValue: currentProgressValue + 15 };
+  const UpdateProgressValue = () => {
+    let collection = "userworkhistories";
 
-      // Send the update request to the backend
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/user/user/${user._id}`,
-        updatedData
-      );
-      message.success(response.data.message || "Profile updated successfully");
-    } catch (error) {
-      message.error(error.response?.data?.error || error);
-    } finally {
-      setLoading(false);
+    if (user) {
+      axios
+        .put(
+          `${process.env.REACT_APP_API_URL}/user/user/progress/${user._id}`,
+          { collection: collection } // Pass the collection name dynamically
+        )
+        .then((response) => {
+          message.success(
+            response.data.message || "Progress updated successfully"
+          );
+        })
+        .catch((error) => {
+          // Check if the error response has data and error message
+          const errorMessage =
+            error.response && error.response.data && error.response.data.error
+              ? error.response.data.error
+              : "Failed to update progress"; // Default message
+          message.error(errorMessage);
+        });
     }
   };
 

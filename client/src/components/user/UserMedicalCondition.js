@@ -23,12 +23,6 @@ const UserMedicalCondition = ({ user }) => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
 
-  const currentProgressValue = user.progressValue || 0; // Default to 0 if no value exists
-
-  useEffect(() => {
-    fetchMedicalConditions();
-  }, []);
-
   const fetchMedicalConditions = async () => {
     try {
       setLoading(true);
@@ -47,26 +41,37 @@ const UserMedicalCondition = ({ user }) => {
     }
   };
 
+  useEffect(() => {
+    fetchMedicalConditions();
+  }, []);
+
   const handleConfirm = async () => {
     setConfirmVisible(false);
     UpdateProgressValue();
   };
 
-  const UpdateProgressValue = async () => {
-    try {
-      setLoading(true);
-      const updatedData = { progressValue: currentProgressValue + 15 };
+  const UpdateProgressValue = () => {
+    let collection = "usermedicalconditions";
 
-      // Send the update request to backend
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/user/user/${user._id}`,
-        updatedData
-      );
-      message.success(response.data.message || "Profile updated successfully");
-    } catch (error) {
-      message.error(error.response?.data?.error || error);
-    } finally {
-      setLoading(false);
+    if (user) {
+      axios
+        .put(
+          `${process.env.REACT_APP_API_URL}/user/user/progress/${user._id}`,
+          { collection: collection } // Pass the collection name dynamically
+        )
+        .then((response) => {
+          message.success(
+            response.data.message || "Progress updated successfully"
+          );
+        })
+        .catch((error) => {
+          // Check if the error response has data and error message
+          const errorMessage =
+            error.response && error.response.data && error.response.data.error
+              ? error.response.data.error
+              : "Failed to update progress"; // Default message
+          message.error(errorMessage);
+        });
     }
   };
 
@@ -129,7 +134,28 @@ const UserMedicalCondition = ({ user }) => {
         >
           {!checkboxChecked && (
             <>
-      
+              <Form.Item
+                label="Medical Condition Type"
+                name="type"
+                rules={[{ required: true, message: "This field is required" }]}
+              >
+                <Select>
+                  <Option value="Pregnancy">Pregnancy</Option>
+                  <Option value="Therapy">Therapy</Option>
+                  <Option value="Other">Other</Option>
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label="Notes"
+                name="notes"
+                rules={[
+                  { required: true, message: "This field is required" },
+                  { max: 300, message: "Maximum length is 300 characters" },
+                ]}
+              >
+                <TextArea placeholder="Enter your notes (Max 300 characters)" />
+              </Form.Item>
             </>
           )}
 
@@ -178,7 +204,6 @@ const UserMedicalCondition = ({ user }) => {
         loading={loading}
         scroll={{ x: "max-content" }}
       />
-      {user.progressValue}
     </div>
   );
 };

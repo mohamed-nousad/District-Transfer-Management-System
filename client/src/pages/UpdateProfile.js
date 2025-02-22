@@ -71,7 +71,7 @@ const UpdateProfile = () => {
       </div>
     );
 
-    return user.isSubmited ? (
+    return user?.isSubmited ? (
       <div style={{ position: "relative" }}>
         {content}
         <div

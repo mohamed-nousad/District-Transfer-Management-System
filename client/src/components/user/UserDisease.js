@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Form, Select, DatePicker, Button, message, Spin, Table , Checkbox , Modal} from "antd";
+import {
+  Form,
+  Select,
+  Button,
+  message,
+  Spin,
+  Table,
+  Checkbox,
+  Modal,
+} from "antd";
 import moment from "moment";
-
 const { Option } = Select;
 
-const UserDisability = ({ user }) => {
+const UserDisease = ({ user }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [TreatmentDate, setTreatmentDate] = useState(false);
   const [diseases, setDiseases] = useState([]);
+
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
-
-  const currentProgressValue = user.progressValue || 0; // Default to 0 if no value exists
-
-  useEffect(() => {
-    fetchDiseases();
-  }, []);
 
   const fetchDiseases = async () => {
     try {
@@ -35,28 +37,9 @@ const UserDisability = ({ user }) => {
     }
   };
 
-  const handleConfirm = async () => {
-    setConfirmVisible(false);
-    UpdateProgressValue();
-  };
-
-  const UpdateProgressValue = async () => {
-    try {
-      setLoading(true);
-      const updatedData = { progressValue: currentProgressValue + 15 };
-
-      // Send the update request to backend
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/user/user/${user._id}`,
-        updatedData
-      );
-      message.success(response.data.message || "Profile updated successfully");
-    } catch (error) {
-      message.error(error.response?.data?.error || error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    fetchDiseases();
+  }, []);
 
   const onFinish = async (values) => {
     try {
@@ -80,6 +63,36 @@ const UserDisability = ({ user }) => {
       setLoading(false);
     }
   };
+  const handleConfirm = async () => {
+    setConfirmVisible(false);
+    UpdateProgressValue();
+  };
+
+  const UpdateProgressValue = () => {
+    let collection = "userdiseases";
+
+    if (user) {
+      axios
+        .put(
+          `${process.env.REACT_APP_API_URL}/user/user/progress/${user._id}`,
+          { collection: collection } // Pass the collection name dynamically
+        )
+        .then((response) => {
+          message.success(
+            response.data.message || "Progress updated successfully"
+          );
+        })
+        .catch((error) => {
+          // Check if the error response has data and error message
+          const errorMessage =
+            error.response && error.response.data && error.response.data.error
+              ? error.response.data.error
+              : "Failed to update progress"; // Default message
+          message.error(errorMessage);
+        });
+    }
+  };
+
 
   const columns = [
     {
@@ -100,28 +113,20 @@ const UserDisability = ({ user }) => {
       render: (text) => (text ? moment(text).format("YYYY-MM-DD") : "N/A"),
     },
   ];
+
   return (
     <div style={{ maxWidth: 1200, margin: "auto", padding: 30 }}>
       <Form form={form} layout="vertical" onFinish={onFinish}>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 20,
-            flexDirection: "column",
-          }}
-        >
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
           {!checkboxChecked && (
             <>
               <Form.Item
                 label="Disease Type"
                 name="type"
                 style={{ flex: "1 1 48%" }}
-                rules={[{ required: true, message: "This field is required" }]}
+                rules={[{ required: true }]}
               >
-                <Select
-                  onChange={(value) => setTreatmentDate(value === "false")}
-                >
+                <Select>
                   <Option value="Heart Disease">Heart Disease</Option>
                   <Option value="Kidney Disease">Kidney Disease</Option>
                   <Option value="Asthma">Asthma</Option>
@@ -131,59 +136,41 @@ const UserDisability = ({ user }) => {
                   <Option value="Hepatitis">Hepatitis</Option>
                 </Select>
               </Form.Item>
-
               <Form.Item
                 label="Are you currently obtaining treatment?"
                 name="are_you_taking_treatment"
                 style={{ flex: "1 1 48%" }}
-                rules={[{ required: true, message: "This field is required" }]}
+                rules={[{ required: true }]}
               >
-                <Select
-                  onChange={(value) => setTreatmentDate(value === "true")}
-                >
+                <Select>
                   <Option value="false">No</Option>
                   <Option value="true">Yes</Option>
                 </Select>
               </Form.Item>
-
-              {TreatmentDate && (
-                <Form.Item
-                  label="Treatment Start Date"
-                  name="treatment_date"
-                  style={{ flex: "1 1 48%" }}
-                >
-                  <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
-                </Form.Item>
-              )}
             </>
           )}
-
-          <Form.Item>
-            <Checkbox onChange={(e) => setCheckboxChecked(e.target.checked)}>
-              I don’t have any medical condition
-            </Checkbox>
-          </Form.Item>
-
-          {checkboxChecked ? (
-            <Button
-              type="primary"
-              onClick={() => setConfirmVisible(true)}
-              block
-              disabled={loading}
-            >
-              {loading ? <Spin /> : "Confirm"}
-            </Button>
-          ) : (
-            <Button
-              type="primary"
-              onClick={form.submit}
-              block
-              disabled={loading}
-            >
-              {loading ? <Spin /> : "Save"}
-            </Button>
-          )}
         </div>
+
+        <Form.Item>
+          <Checkbox onChange={(e) => setCheckboxChecked(e.target.checked)}>
+            I don’t have any disease
+          </Checkbox>
+        </Form.Item>
+
+        {checkboxChecked ? (
+          <Button
+            type="primary"
+            onClick={() => setConfirmVisible(true)}
+            block
+            disabled={loading}
+          >
+            {loading ? <Spin /> : "Confirm"}
+          </Button>
+        ) : (
+          <Button type="primary" htmlType="submit" block disabled={loading}>
+            {loading ? <Spin /> : "Save"}
+          </Button>
+        )}
       </Form>
 
       <Modal
@@ -192,7 +179,7 @@ const UserDisability = ({ user }) => {
         onOk={handleConfirm}
         onCancel={() => setConfirmVisible(false)}
       >
-        <p>Are you sure you want to submit with no medical condition?</p>
+        <p>Are you sure you want to submit with no disease?</p>
       </Modal>
 
       <h2 style={{ marginTop: 30 }}>Diseases</h2>
@@ -206,4 +193,5 @@ const UserDisability = ({ user }) => {
     </div>
   );
 };
-export default UserDisability;
+
+export default UserDisease;

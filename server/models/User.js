@@ -28,6 +28,13 @@ const UserSchema = new mongoose.Schema(
     isRecommended: { type: Boolean, default: false }, // isRecommended status
     isApproved: { type: Boolean, default: false }, // isApproved status
     isRejected: { type: Boolean, default: false }, // isRejected status
+
+    // new fields for the five collections
+    isMedicalConditionSubmited: { type: Boolean, default: false },
+    isWorkHistorySubmited: { type: Boolean, default: false },
+    isDependenceSubmited: { type: Boolean, default: false },
+    isDisabilitySubmited: { type: Boolean, default: false },
+    isDiseaseSubmited: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
