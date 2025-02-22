@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect , useState } from "react";
 import { Input, Button, Form, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
@@ -8,6 +8,7 @@ import { jwtDecode } from "jwt-decode";
 const LoginPage = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -28,6 +29,7 @@ const LoginPage = () => {
   }, [navigate]);
 
   const handleSubmit = async (values) => {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/auth/login`,
@@ -84,8 +86,8 @@ const LoginPage = () => {
             <Input.Password className="w-full p-2 border border-gray-300 rounded-md" />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="w-full">
-              Login
+            <Button type="primary" htmlType="submit" block loading={loading}>
+              {loading ? "Logging in..." : "Login"}
             </Button>
           </Form.Item>
         </Form>
