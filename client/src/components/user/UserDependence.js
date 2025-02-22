@@ -23,8 +23,9 @@ const Dependence = ({ user }) => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
 
-  // Removed the unused variable `currentProgressValue`
+  const currentProgressValue = user.progressValue || 0; // Default to 0 if no value exists
 
+  // Removed the unused variable `currentProgressValue`
   const fetchDependences = useCallback(async () => {
     try {
       setLoading(true);
@@ -35,7 +36,9 @@ const Dependence = ({ user }) => {
       );
       setDependences(response.data || []);
     } catch (error) {
-      message.error(error.response?.data?.error || "Failed to fetch dependences");
+      message.error(
+        error.response?.data?.error || "Failed to fetch dependences"
+      );
     } finally {
       setLoading(false);
     }
@@ -44,6 +47,29 @@ const Dependence = ({ user }) => {
   useEffect(() => {
     fetchDependences();
   }, [fetchDependences]);
+
+  const handleConfirm = async () => {
+    setConfirmVisible(false);
+    UpdateProgressValue();
+  };
+
+  const UpdateProgressValue = async () => {
+    try {
+      setLoading(true);
+      const updatedData = { progressValue: currentProgressValue + 15 };
+
+      // Send the update request to backend
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/user/user/${user._id}`,
+        updatedData
+      );
+      message.success(response.data.message || "Profile updated successfully");
+    } catch (error) {
+      message.error(error.response?.data?.error || error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onFinish = async (values) => {
     try {
@@ -67,11 +93,6 @@ const Dependence = ({ user }) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleConfirm = async () => {
-    setConfirmVisible(false);
-    onFinish({}); // Submit empty values as "no dependents"
   };
 
   const columns = [
@@ -210,9 +231,7 @@ const Dependence = ({ user }) => {
 
         {/* "No Dependents" Checkbox */}
         <Form.Item>
-          <Checkbox
-            onChange={(e) => setCheckboxChecked(e.target.checked)}
-          >
+          <Checkbox onChange={(e) => setCheckboxChecked(e.target.checked)}>
             I don't have any dependents
           </Checkbox>
         </Form.Item>
@@ -227,12 +246,7 @@ const Dependence = ({ user }) => {
             {loading ? <Spin /> : "Confirm"}
           </Button>
         ) : (
-          <Button
-            type="primary"
-            onClick={form.submit}
-            block
-            disabled={loading}
-          >
+          <Button type="primary" onClick={form.submit} block disabled={loading}>
             {loading ? <Spin /> : "Save"}
           </Button>
         )}
