@@ -129,28 +129,7 @@ const UserMedicalCondition = ({ user }) => {
         >
           {!checkboxChecked && (
             <>
-              <Form.Item
-                label="Medical Condition Type"
-                name="type"
-                rules={[{ required: true, message: "This field is required" }]}
-              >
-                <Select>
-                  <Option value="Pregnancy">Pregnancy</Option>
-                  <Option value="Therapy">Therapy</Option>
-                  <Option value="Other">Other</Option>
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                label="Notes"
-                name="notes"
-                rules={[
-                  { required: true, message: "This field is required" },
-                  { max: 300, message: "Maximum length is 300 characters" },
-                ]}
-              >
-                <TextArea placeholder="Enter your notes (Max 300 characters)" />
-              </Form.Item>
+      
             </>
           )}
 
