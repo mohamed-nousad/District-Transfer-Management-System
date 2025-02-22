@@ -21,7 +21,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://dtms.app",
+    origin: "https://dtms.vercel.app",
     credentials: true,
   })
 );
