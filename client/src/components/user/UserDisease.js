@@ -1,26 +1,32 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Form, Select, DatePicker, Button, message, Spin, Table } from "antd";
+import {
+  Form,
+  Select,
+  Button,
+  message,
+  Spin,
+  Table,
+  Checkbox,
+  Modal,
+} from "antd";
 import moment from "moment";
-
 const { Option } = Select;
 
-const UserDisability = ({ userData }) => {
+const UserDisease = ({ user }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [TreatmentDate, setTreatmentDate] = useState(false);
   const [diseases, setDiseases] = useState([]);
 
-  useEffect(() => {
-    fetchDiseases();
-  }, []);
+  const [checkboxChecked, setCheckboxChecked] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
 
   const fetchDiseases = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/user/disease/user/${userData.id}`,
+        `${process.env.REACT_APP_API_URL}/user/disease/user/${user._id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setDiseases(response.data || []);
@@ -31,13 +37,17 @@ const UserDisability = ({ userData }) => {
     }
   };
 
+  useEffect(() => {
+    fetchDiseases();
+  }, []);
+
   const onFinish = async (values) => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/user/disease`,
-        { ...values, userId: userData.id }, // Include userId
+        { ...values, userId: user._id }, // Include userId
         { headers: { Authorization: `Bearer ${token}` } }
       );
       message.success(response.data.message || "Disease added successfully");
@@ -53,6 +63,36 @@ const UserDisability = ({ userData }) => {
       setLoading(false);
     }
   };
+  const handleConfirm = async () => {
+    setConfirmVisible(false);
+    UpdateProgressValue();
+  };
+
+  const UpdateProgressValue = () => {
+    let collection = "userdiseases";
+
+    if (user) {
+      axios
+        .put(
+          `${process.env.REACT_APP_API_URL}/user/user/progress/${user._id}`,
+          { collection: collection } // Pass the collection name dynamically
+        )
+        .then((response) => {
+          message.success(
+            response.data.message || "Progress updated successfully"
+          );
+        })
+        .catch((error) => {
+          // Check if the error response has data and error message
+          const errorMessage =
+            error.response && error.response.data && error.response.data.error
+              ? error.response.data.error
+              : "Failed to update progress"; // Default message
+          message.error(errorMessage);
+        });
+    }
+  };
+
 
   const columns = [
     {
@@ -78,48 +118,70 @@ const UserDisability = ({ userData }) => {
     <div style={{ maxWidth: 1200, margin: "auto", padding: 30 }}>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
-          <Form.Item
-            label="Disease Type"
-            name="type"
-            style={{ flex: "1 1 48%" }}
-            rules={[{ required: true, message: "This field is required" }]}
-          >
-            <Select onChange={(value) => setTreatmentDate(value === "false")}>
-              <Option value="Heart Disease">Heart Disease</Option>
-              <Option value="Kidney Disease">Kidney Disease</Option>
-              <Option value="Asthma">Asthma</Option>
-              <Option value="AIDS">AIDS</Option>
-              <Option value="Tuberculosis">Tuberculosis</Option>
-              <Option value="Cancer">Cancer</Option>
-              <Option value="Hapatatis">Hapatatis</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="Are you currently obtaining treatement?"
-            name="are_you_taking_treatment"
-            style={{ flex: "1 1 48%" }}
-            rules={[{ required: true, message: "This field is required" }]}
-          >
-            <Select onChange={(value) => setTreatmentDate(value === "true")}>
-              <Option value="false">No</Option>
-              <Option value="true">Yes</Option>
-            </Select>
-          </Form.Item>
-
-          {TreatmentDate && (
-            <Form.Item
-              label="Treatment start Date"
-              name="treatment_date"
-              style={{ flex: "1 1 48%" }}
-            >
-              <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
-            </Form.Item>
+          {!checkboxChecked && (
+            <>
+              <Form.Item
+                label="Disease Type"
+                name="type"
+                style={{ flex: "1 1 48%" }}
+                rules={[{ required: true }]}
+              >
+                <Select>
+                  <Option value="Heart Disease">Heart Disease</Option>
+                  <Option value="Kidney Disease">Kidney Disease</Option>
+                  <Option value="Asthma">Asthma</Option>
+                  <Option value="AIDS">AIDS</Option>
+                  <Option value="Tuberculosis">Tuberculosis</Option>
+                  <Option value="Cancer">Cancer</Option>
+                  <Option value="Hepatitis">Hepatitis</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="Are you currently obtaining treatment?"
+                name="are_you_taking_treatment"
+                style={{ flex: "1 1 48%" }}
+                rules={[{ required: true }]}
+              >
+                <Select>
+                  <Option value="false">No</Option>
+                  <Option value="true">Yes</Option>
+                </Select>
+              </Form.Item>
+            </>
           )}
         </div>
-        <Button type="primary" htmlType="submit" block disabled={loading}>
-          {loading ? <Spin /> : "Save"}
-        </Button>
+
+        <Form.Item>
+          <Checkbox onChange={(e) => setCheckboxChecked(e.target.checked)}>
+            I don’t have any disease
+          </Checkbox>
+        </Form.Item>
+
+        {checkboxChecked ? (
+          <Button
+            type="primary"
+            onClick={() => setConfirmVisible(true)}
+            block
+            disabled={loading}
+          >
+            {loading ? <Spin /> : "Confirm"}
+          </Button>
+        ) : (
+          <Button type="primary" htmlType="submit" block disabled={loading}>
+            {loading ? <Spin /> : "Save"}
+          </Button>
+        )}
       </Form>
+
+      <Modal
+        title="Confirm Submission"
+        open={confirmVisible}
+        onOk={handleConfirm}
+        onCancel={() => setConfirmVisible(false)}
+      >
+        <p>Are you sure you want to submit with no disease?</p>
+      </Modal>
+
       <h2 style={{ marginTop: 30 }}>Diseases</h2>
       <Table
         dataSource={diseases}
@@ -132,4 +194,4 @@ const UserDisability = ({ userData }) => {
   );
 };
 
-export default UserDisability;
+export default UserDisease;

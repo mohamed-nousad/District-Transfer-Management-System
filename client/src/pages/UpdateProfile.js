@@ -9,7 +9,7 @@ import UserDisease from "../components/user/UserDisease";
 import UserMedicalCondition from "../components/user/UserMedicalCondition";
 import UserDisability from "../components/user/UserDisability";
 import FinalSubmition from "../components/user/FinalSubmition";
-import useCheckAdminAuth from "../utils/checkUserAuth";
+import useCheckUserAuth from "../utils/checkUserAuth";
 import axios from "axios";
 
 import { Grid } from "antd";
@@ -17,12 +17,12 @@ const { useBreakpoint } = Grid;
 const { Content, Sider } = Layout;
 
 const UpdateProfile = () => {
-  const { userData, authloading } = useCheckAdminAuth();
+  const { userData, authloading } = useCheckUserAuth();
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const [currentSection, setCurrentSection] = useState("UserProfile");
+  const [currentSection, setCurrentSection] = useState("BasicDetails");
   const [drawerVisible, setDrawerVisible] = useState(false);
   const screens = useBreakpoint();
 
@@ -45,7 +45,7 @@ const UpdateProfile = () => {
   }, [userData]);
 
   const sections = [
-    { key: "UserProfile", label: "User Profile" },
+    { key: "BasicDetails", label: "Basic Details" },
     { key: "WorkHistory", label: "Work History" },
     { key: "Dependence", label: "Dependence" },
     { key: "Disease", label: "Disease" },
@@ -57,29 +57,21 @@ const UpdateProfile = () => {
   const renderContent = () => {
     const content = (
       <div style={{ position: "relative" }}>
-        {currentSection === "UserProfile" && (
+        {currentSection === "BasicDetails" && (
           <UserProfile userData={userData} />
         )}
-        {currentSection === "WorkHistory" && (
-          <UserWorkHistory userData={userData} />
-        )}
-        {currentSection === "Dependence" && (
-          <UserDependence userData={userData} />
-        )}
-        {currentSection === "Disease" && <UserDisease userData={userData} />}
+        {currentSection === "WorkHistory" && <UserWorkHistory user={user} />}
+        {currentSection === "Dependence" && <UserDependence user={user} />}
+        {currentSection === "Disease" && <UserDisease user={user} />}
         {currentSection === "MedicalCondition" && (
-          <UserMedicalCondition userData={userData} />
+          <UserMedicalCondition user={user} />
         )}
-        {currentSection === "Disability" && (
-          <UserDisability userData={userData} />
-        )}
-        {currentSection === "FinalSubmition" && (
-          <FinalSubmition userData={userData} user={user} />
-        )}
+        {currentSection === "Disability" && <UserDisability user={user} />}
+        {currentSection === "FinalSubmition" && <FinalSubmition user={user} />}
       </div>
     );
 
-    return user.isSubmited ? (
+    return user?.isSubmited ? (
       <div style={{ position: "relative" }}>
         {content}
         <div
@@ -184,7 +176,6 @@ const UpdateProfile = () => {
           onClick={({ key }) => {
             setCurrentSection(key);
             closeDrawer();
-           
           }}
         >
           {sections.map((section) => (
@@ -216,37 +207,38 @@ const UpdateProfile = () => {
           </Breadcrumb.Item>
           <Breadcrumb.Item>{currentSection}</Breadcrumb.Item>
         </Breadcrumb>
-        <Alert
-          style={{
-            maxWidth: 900,
-            fontSize: 12,
-            padding: "4px 8px",
-            alignItems: "center",
-            margin: "auto",
-          }}
-          message={
-            user.isApproved
-              ? "Profile verified"
-              : user.isRejected
-              ? "Your data is invalid, please resubmit"
-              : user.isSubmited
-              ? "Your data submitted, please wait for the approval"
-              : "Your profile is not submitted, Please submit."
-          }
-          type={
-            user.isApproved
-              ? "success"
-              : user.isRejected
-              ? "error"
-              : user.isSubmited
-              ? "success"
-              : "warning"
-          }
-          showIcon
-          className="mb-4"
-        />
-        <div className="m-auto w-full text-center"></div>
 
+        <div className="m-auto w-auto text-center">
+          <Alert
+            style={{
+              maxWidth: 900,
+              fontSize: 12,
+              padding: "4px 8px",
+              alignItems: "center",
+              margin: "auto",
+            }}
+            message={
+              user.isApproved
+                ? "Profile verified"
+                : user.isRejected
+                ? "Your data is invalid, please resubmit"
+                : user.isSubmited
+                ? "Your data submitted, please wait for the approval"
+                : "Your profile is not submitted, Please submit."
+            }
+            type={
+              user.isApproved
+                ? "success"
+                : user.isRejected
+                ? "error"
+                : user.isSubmited
+                ? "success"
+                : "warning"
+            }
+            showIcon
+            className="mb-4"
+          />
+        </div>
         {renderContent()}
         {error && (
           <Alert message={error} type="error" showIcon className="mb-4" />

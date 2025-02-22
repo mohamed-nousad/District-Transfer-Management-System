@@ -5,12 +5,12 @@ import axios from "axios";
 
 const { Title, Paragraph } = Typography;
 
-const FinalSubmissionPage = ({ userData, user }) => {
+const FinalSubmissionPage = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const navigate = useNavigate();
 
-  const id = userData.id ?? id;
+  const id = user._id ?? id;
 
   const handleTermsChange = (e) => {
     setTermsAccepted(e.target.checked);
