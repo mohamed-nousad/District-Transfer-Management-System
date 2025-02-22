@@ -57,35 +57,42 @@ const FinalSubmissionPage = ({ user }) => {
       }}
     >
       <Title level={2}>Final Submission</Title>
-      <Paragraph>
-        Before submitting, please review and accept the Terms & Conditions.
-        <br></br>
-      </Paragraph>
 
       <Form layout="vertical" onFinish={onFinish}>
-        <Form.Item
-          name="agree"
-          valuePropName="checked"
-          rules={[{ required: true, message: "You must accept the terms!" }]}
-        >
-          {!user.isSubmited && (
-            <Checkbox onChange={handleTermsChange}>
-              I hereby confirm that my details are correct and according to my knowledge. <a href="/terms" className="text-blue-500">Terms & Conditions</a>
-              .
-            </Checkbox>
-          )}
-        </Form.Item>
+        {!user.isSubmited &&
+        user.isMedicalConditionSubmited &&
+        user.isWorkHistorySubmited &&
+        user.isDependenceSubmited &&
+        user.isDisabilitySubmited &&
+        user.isDiseaseSubmited ? (
+          <>
+            <Paragraph>
+              Before submitting, please review and accept the Terms &
+              Conditions.
+            </Paragraph>
 
-        {!user.isSubmited && (
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            disabled={loading || !termsAccepted}
-          >
-            {loading ? <Spin /> : "Submit"}
-          </Button>
-        )}
+            <Form.Item>
+              <Checkbox onChange={handleTermsChange}>
+                I hereby confirm that my details are correct and according to my
+                knowledge.{" "}
+                <a href="/terms" className="text-blue-500">
+                  Terms & Conditions
+                </a>
+              </Checkbox>
+            </Form.Item>
+
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                disabled={loading || !termsAccepted}
+              >
+                {loading ? <Spin /> : "Submit"}
+              </Button>
+            </Form.Item>
+          </>
+        ) : null}
       </Form>
     </div>
   );
