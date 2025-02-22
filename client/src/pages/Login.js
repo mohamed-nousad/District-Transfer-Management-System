@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Input, Button, Form, message, Checkbox } from "antd";
+import { Input, Button, Form, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import axios from "axios";
@@ -68,7 +68,12 @@ const LoginPage = () => {
             name="NIC"
             rules={[{ required: true, message: "Please input your NIC!" }]}
           >
-            <Input className="w-full p-2 border border-gray-300 rounded-md" />
+            <Input
+              className="w-full p-2 border border-gray-300 rounded-md"
+              onChange={(e) => {
+                form.setFieldsValue({ NIC: e.target.value.toUpperCase() });
+              }}
+            />
           </Form.Item>
 
           <Form.Item
@@ -78,7 +83,6 @@ const LoginPage = () => {
           >
             <Input.Password className="w-full p-2 border border-gray-300 rounded-md" />
           </Form.Item>
-
           <Form.Item>
             <Button type="primary" htmlType="submit" className="w-full">
               Login

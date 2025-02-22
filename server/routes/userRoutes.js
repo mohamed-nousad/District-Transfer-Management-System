@@ -1,5 +1,6 @@
 const express = require("express");
 const { validateUser } = require("../middleware/user/validateUser");
+const { restrictRoute } = require("../middleware/user/routeRestriction");
 
 const UserController = require("../controllers/user/UserController");
 const UserDependenceController = require("../controllers/user/UserDependenceController");
@@ -18,6 +19,7 @@ router.get(
 router.put(
   "/user/progress/:id",
   UserController.validateUser,
+  restrictRoute,
   UserController.updateProfileProgress
 );
 
@@ -112,10 +114,7 @@ router.post(
   UserWorkHistoryController.createWorkHistory
 );
 
-router.get(
-  "/workhistory",
-  UserWorkHistoryController.getAllWorkHistories
-);
+router.get("/workhistory", UserWorkHistoryController.getAllWorkHistories);
 router.get("/workhistory/:id", UserWorkHistoryController.getOneWorkHistory);
 router.get(
   "/workhistory/user/:userId",

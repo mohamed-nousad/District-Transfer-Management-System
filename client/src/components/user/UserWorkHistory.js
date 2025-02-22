@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import {
   Form,
@@ -9,21 +9,22 @@ import {
   Spin,
   Table,
   Input,
+  Checkbox,
+  Modal,
 } from "antd";
 import moment from "moment";
+
 const { Option } = Select;
 
 const UserWorkHistory = ({ user }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-
   const [workhistories, setWorkhistories] = useState([]);
+  const [checkboxChecked, setCheckboxChecked] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
 
-  useEffect(() => {
-    fetchWorkHistories();
-  }, []);
-
-  const fetchWorkHistories = async () => {
+  // Fetch work histories with useCallback
+  const fetchWorkHistories = useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
@@ -34,10 +35,44 @@ const UserWorkHistory = ({ user }) => {
       setWorkhistories(response.data || []);
     } catch (error) {
       message.error(
-        error.response?.data?.error || "Failed to fetch workhistories"
+        error.response?.data?.error || "Failed to fetch work histories"
       );
     } finally {
       setLoading(false);
+    }
+  }, [user._id]); // Add user._id to the dependency array
+
+  useEffect(() => {
+    fetchWorkHistories();
+  }, []); // Include fetchWorkHistories in the dependency array
+
+  const handleConfirm = async () => {
+    setConfirmVisible(false);
+    UpdateProgressValue();
+  };
+
+  const UpdateProgressValue = () => {
+    let collection = "userworkhistories";
+
+    if (user) {
+      axios
+        .put(
+          `${process.env.REACT_APP_API_URL}/user/user/progress/${user._id}`,
+          { collection: collection } // Pass the collection name dynamically
+        )
+        .then((response) => {
+          message.success(
+            response.data.message || "Progress updated successfully"
+          );
+        })
+        .catch((error) => {
+          // Check if the error response has data and error message
+          const errorMessage =
+            error.response && error.response.data && error.response.data.error
+              ? error.response.data.error
+              : "Failed to update progress"; // Default message
+          message.error(errorMessage);
+        });
     }
   };
 
@@ -47,11 +82,11 @@ const UserWorkHistory = ({ user }) => {
       const token = localStorage.getItem("token");
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/user/workhistory`,
-        { ...values, userId: user._id }, // Include userId
+        { ...values, userId: user._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       message.success(
-        response.data.message || "Workhistory added successfully"
+        response.data.message || "Work history added successfully"
       );
       form.resetFields();
       fetchWorkHistories(); // Refresh the table after adding
@@ -101,83 +136,117 @@ const UserWorkHistory = ({ user }) => {
     <div style={{ maxWidth: 1200, margin: "auto", padding: 30 }}>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
-          <Form.Item
-            label="Workplace name"
-            name="workplace"
-            style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
+          {/* Render form fields conditionally based on checkboxChecked */}
+          {!checkboxChecked && (
+            <>
+              <Form.Item
+                label="Workplace Name"
+                name="workplace"
+                style={{ flex: "1 1 48%" }}
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
 
-          <Form.Item
-            label="Workplace Type"
-            name="workplace_type"
-            style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
-          >
-            <Select>
-              <Option value="District Secretariat">District Secretariat</Option>
-              <Option value="Divisional Secretariat">
-                Divisional Secretariat
-              </Option>
-              <Option value="Ministry / Department">
-                Ministry / Department
-              </Option>
-            </Select>
-          </Form.Item>
+              <Form.Item
+                label="Workplace Type"
+                name="workplace_type"
+                style={{ flex: "1 1 48%" }}
+                rules={[{ required: true }]}
+              >
+                <Select>
+                  <Option value="District Secretariat">
+                    District Secretariat
+                  </Option>
+                  <Option value="Divisional Secretariat">
+                    Divisional Secretariat
+                  </Option>
+                  <Option value="Ministry / Department">
+                    Ministry / Department
+                  </Option>
+                </Select>
+              </Form.Item>
 
-          <Form.Item
-            label="Workplace City"
-            name="workplace_city"
-            style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
+              <Form.Item
+                label="Workplace City"
+                name="workplace_city"
+                style={{ flex: "1 1 48%" }}
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
 
-          <Form.Item
-            label="Workplace Postal Code"
-            name="workplace_postalcode"
-            style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
+              <Form.Item
+                label="Workplace Postal Code"
+                name="workplace_postalcode"
+                style={{ flex: "1 1 48%" }}
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
 
-          <Form.Item
-            label="Designation"
-            name="designation"
-            style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
+              <Form.Item
+                label="Designation"
+                name="designation"
+                style={{ flex: "1 1 48%" }}
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
 
-          <Form.Item
-            label="Start Date"
-            name="start_date"
-            style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
-          >
-            <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
-          </Form.Item>
+              <Form.Item
+                label="Start Date"
+                name="start_date"
+                style={{ flex: "1 1 48%" }}
+                rules={[{ required: true }]}
+              >
+                <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+              </Form.Item>
 
-          <Form.Item
-            label="End Date"
-            name="end_date"
-            style={{ flex: "1 1 48%" }}
-            rules={[{ required: true }]}
-          >
-            <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
-          </Form.Item>
+              <Form.Item
+                label="End Date"
+                name="end_date"
+                style={{ flex: "1 1 48%" }}
+                rules={[{ required: true }]}
+              >
+                <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+              </Form.Item>
+            </>
+          )}
         </div>
 
-        <Button type="primary" htmlType="submit" block disabled={loading}>
-          {loading ? <Spin /> : "Save"}
-        </Button>
+        <Form.Item>
+          <Checkbox onChange={(e) => setCheckboxChecked(e.target.checked)}>
+            I don’t have any work history
+          </Checkbox>
+        </Form.Item>
+
+        {checkboxChecked ? (
+          <Button
+            type="primary"
+            onClick={() => setConfirmVisible(true)}
+            block
+            disabled={loading}
+          >
+            {loading ? <Spin /> : "Confirm"}
+          </Button>
+        ) : (
+          <Button type="primary" onClick={form.submit} block disabled={loading}>
+            {loading ? <Spin /> : "Save"}
+          </Button>
+        )}
       </Form>
-      <h2 style={{ marginTop: 30 }}>Work Hoistories</h2>
+
+      <Modal
+        title="Confirm Submission"
+        open={confirmVisible}
+        onOk={handleConfirm}
+        onCancel={() => setConfirmVisible(false)}
+      >
+        <p>Are you sure you want to submit with no work history?</p>
+      </Modal>
+
+      <h2 style={{ marginTop: 30 }}>Work Histories</h2>
       <Table
         dataSource={workhistories}
         columns={columns}

@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Form, Select, Input, Button, message, Spin, Table, Checkbox, Modal } from "antd";
+import {
+  Form,
+  Select,
+  Input,
+  Button,
+  message,
+  Spin,
+  Table,
+  Checkbox,
+  Modal,
+} from "antd";
 import moment from "moment";
 const { Option } = Select;
 
@@ -8,15 +18,9 @@ const UserDisability = ({ user }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [disabilities, setDisabilities] = useState([]);
-  
+
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
-  
-  const currentProgressValue = user.progressValue || 0; // Default to 0 if no value exists
-
-  useEffect(() => {
-    fetchDisabilities();
-  }, []);
 
   const fetchDisabilities = async () => {
     try {
@@ -35,6 +39,10 @@ const UserDisability = ({ user }) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchDisabilities();
+  }, []);
 
   const onFinish = async (values) => {
     try {
@@ -58,6 +66,36 @@ const UserDisability = ({ user }) => {
       setLoading(false);
     }
   };
+  const handleConfirm = async () => {
+    setConfirmVisible(false);
+    UpdateProgressValue();
+  };
+
+  const UpdateProgressValue = () => {
+    let collection = "userdisabilities";
+
+    if (user) {
+      axios
+        .put(
+          `${process.env.REACT_APP_API_URL}/user/user/progress/${user._id}`,
+          { collection: collection } // Pass the collection name dynamically
+        )
+        .then((response) => {
+          message.success(
+            response.data.message || "Progress updated successfully"
+          );
+        })
+        .catch((error) => {
+          // Check if the error response has data and error message
+          const errorMessage =
+            error.response && error.response.data && error.response.data.error
+              ? error.response.data.error
+              : "Failed to update progress"; // Default message
+          message.error(errorMessage);
+        });
+    }
+  };
+
 
   const columns = [
     {
@@ -74,7 +112,7 @@ const UserDisability = ({ user }) => {
       title: "Since Birth",
       dataIndex: "since_birth",
       key: "since_birth",
-      render: (text) => (text ? "Yes" : "No")
+      render: (text) => (text ? "Yes" : "No"),
     },
     {
       title: "Number of years",
@@ -83,29 +121,6 @@ const UserDisability = ({ user }) => {
       render: (text) => text || "N/A",
     },
   ];
-
-  const handleConfirm = async () => {
-    setConfirmVisible(false);
-    UpdateProgressValue();
-  };
-
-  const UpdateProgressValue = async () => {
-    try {
-      setLoading(true);
-      const updatedData = { progressValue: currentProgressValue + 15 };
-
-      // Send the update request to the backend
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/user/user/${user._id}`,
-        updatedData
-      );
-      message.success(response.data.message || "Profile updated successfully");
-    } catch (error) {
-      message.error(error.response?.data?.error || error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div style={{ maxWidth: 1200, margin: "auto", padding: 30 }}>
@@ -157,7 +172,10 @@ const UserDisability = ({ user }) => {
                   style={{ flex: "1 1 48%" }}
                   rules={[
                     { required: true, message: "This field is required" },
-                    { pattern: /^[0-9]+$/, message: "Only numbers are allowed" },
+                    {
+                      pattern: /^[0-9]+$/,
+                      message: "Only numbers are allowed",
+                    },
                   ]}
                 >
                   <Input />
@@ -165,7 +183,6 @@ const UserDisability = ({ user }) => {
               )}
             </>
           )}
-
         </div>
 
         <Form.Item>
@@ -212,5 +229,3 @@ const UserDisability = ({ user }) => {
 };
 
 export default UserDisability;
-
-

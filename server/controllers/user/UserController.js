@@ -62,47 +62,53 @@ exports.getUserProfileProgress = async (req, res) => {
     res.status(500).json({ error: "Error retrieving user progress" });
   }
 };
-
 exports.updateProfileProgress = async (req, res) => {
-  const userId = req.params.id; // Get userId from the route parameter
-
+  const userId = req.params.id;
+  const { collection } = req.body; // Get collection name from request body
   const user = await User.findById(userId);
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
+
+  if (!user) return res.status(404).json({ message: "User not found" });
+
+  // Map of collections to the corresponding user submission fields
+  const collectionMap = {
+    usermedicalconditions: "isMedicalConditionSubmited",
+    userworkhistories: "isWorkHistorySubmited",
+    userdependences: "isDependenceSubmited",
+    userdisabilities: "isDisabilitySubmited",
+    userdiseases: "isDiseaseSubmited",
+  };
+
+  const submissionField = collectionMap[collection];
+
+  if (!submissionField)
+    return res.status(400).json({ error: "Invalid collection name" });
+
+  // Check if the submission has already been made for the collection
+  if (user[submissionField]) {
+    return res.status(400).json({
+      error: `You have already submitted for ${collection}`,
+    });
   }
 
-  let progress = 15; // Default progress value
+  // Set the submission field to true
+  user[submissionField] = true;
 
-  const collections = [
-    UserDependence,
-    UserDisability,
-    UserDisease,
-    UserMedicalCondition,
-    UserWorkHistory,
-  ];
+  // Add progress if collection exists
+  let progress = 15;
 
-  let completedCount = 0;
-
-  // Count completed collections
-  for (const Collection of collections) {
-    const data = await Collection.findOne({ userId: user._id });
-    if (data) completedCount++;
-  }
-
-  // Add 15 for each completed collection
-  progress += completedCount * 15;
-
-  // Add 10 if user is approved
+  // Check for approval conditions
   if (
     user.isSubmited &&
     user.isChecked &&
     user.isRecommended &&
     user.isApproved
-  )
+  ) {
     progress += 10;
+  }
 
-  // Update user's progress value
-  await User.findByIdAndUpdate(userId, { progressValue: progress });
+  // Update progress value
+  user.progressValue += progress;
+  await user.save();
 
   res.json({ message: "Progress updated!", progress });
 };

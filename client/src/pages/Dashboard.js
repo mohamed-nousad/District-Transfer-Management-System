@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Button,
   Layout,
@@ -19,7 +19,7 @@ const Dashboard = () => {
   const { userData, loading } = useCheckUserAuth();
   const [profileCompletion, setProfileCompletion] = useState(0);
 
-  useEffect(() => {
+  const fetchValue = useCallback(() => {
     if (userData) {
       axios
         .get(
@@ -27,25 +27,22 @@ const Dashboard = () => {
         )
         .then((response) => {
           setProfileCompletion(response.data.progress);
-          handleRefresh();
         })
         .catch(() => message.error("Failed to fetch progress"));
     }
   }, [userData]);
 
-  const handleRefresh = () => {
-    if (userData) {
-      axios
-        .put(
-          `${process.env.REACT_APP_API_URL}/user/user/progress/${userData.id}`,
-          { progressValue: profileCompletion }
-        )
-        .then((response) => {
-          setProfileCompletion(response.data.progress); // Ensure correct response property
-        })
-        .catch(() => message.error("Failed to update progress"));
-    }
-  };
+  useEffect(() => {
+    fetchValue(); // Initial fetch
+
+    // Polling every 5 seconds (or adjust time as needed)
+    const intervalId = setInterval(() => {
+      fetchValue();
+    }, 2000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [fetchValue]); // Runs when `fetchValue` changes (now it's memoized)
 
   if (loading)
     return (
