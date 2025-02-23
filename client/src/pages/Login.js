@@ -44,6 +44,10 @@ const LoginPage = () => {
       console.error("Error during login:", error);
       message.error(error.response?.data?.message || `Login failed. try again`);
     }
+  finally {
+    setLoading(false);
+  }
+    
   };
 
   return (
