@@ -114,7 +114,7 @@ const loginUser = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1h" } // Adjust expiration time
     );
-
+     
     res.status(200).json({
       message: "Login successful",
       token,
@@ -130,3 +130,4 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { registerUser, loginUser };
+

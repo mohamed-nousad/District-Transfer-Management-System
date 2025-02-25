@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Menu, Drawer, Button, Form, Input } from "antd";
+import { Modal, Menu, Drawer, Button, Form, Input, message } from "antd";
 import {
   LockOutlined,
   UserOutlined,
@@ -7,28 +7,41 @@ import {
   MenuOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const { SubMenu } = Menu;
 
 const Sidebar = () => {
   const [visible, setVisible] = useState(false);
-
-  const showDrawer = () => {
-    setVisible(true);
-  };
-
-  const closeDrawer = () => {
-    setVisible(false);
-  };
-
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false); // State for button loading
 
+  const showDrawer = () => setVisible(true);
+  const closeDrawer = () => setVisible(false);
   const showModal = () => setIsModalVisible(true);
   const handleCancel = () => setIsModalVisible(false);
 
-  const handleChangePassword = (values) => {
-    console.log("New Password:", values);
-    setIsModalVisible(false);
+  // Handle Change Password Submission
+  const handleChangePassword = async (values) => {
+    try {
+      setLoading(true);
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/auth/change-password`,
+        values
+      );
+
+      if (response.status === 200) {
+        message.success("Password changed successfully!");
+        setIsModalVisible(false);
+      }
+    } catch (error) {
+      console.error("Change Password Error:", error);
+      message.error(
+        error.response?.data?.message || "Failed to change password."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,13 +64,7 @@ const Sidebar = () => {
       />
 
       {/* Sidebar Menu */}
-      <Drawer
-        title="Menu"
-        placement="left"
-        onClose={closeDrawer}
-        visible={visible}
-      >
-        {/* Sidebar Menu */}
+      <Drawer title="Menu" placement="left" onClose={closeDrawer} open={visible}>
         <Menu mode="vertical" defaultSelectedKeys={["1"]}>
           <Menu.Item key="1" icon={<UserOutlined />}>
             <Link to="/dashboard">Dashboard</Link>
@@ -72,68 +79,69 @@ const Sidebar = () => {
             </Menu.Item>
           </SubMenu>
         </Menu>
-        {/* Change Password Modal */}
-        <Modal
-          title="Change Password"
-          open={isModalVisible}
-          onCancel={handleCancel}
-          footer={null}
-          width={window.innerWidth < 768 ? "90%" : 500} // Responsive width
-        >
-          <Form layout="vertical" onFinish={handleChangePassword}>
-            <Form.Item
-              name="currentPassword"
-              label="Current Password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter your current password!",
-                },
-              ]}
-            >
-              <Input.Password placeholder="Enter current password" />
-            </Form.Item>
-
-            <Form.Item
-              name="newPassword"
-              label="New Password"
-              rules={[
-                { required: true, message: "Please enter a new password!" },
-                { min: 6, message: "Password must be at least 6 characters!" },
-              ]}
-            >
-              <Input.Password placeholder="Enter new password" />
-            </Form.Item>
-
-            <Form.Item
-              name="confirmPassword"
-              label="Confirm New Password"
-              dependencies={["newPassword"]}
-              rules={[
-                {
-                  required: true,
-                  message: "Please confirm your new password!",
-                },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    return value && value === getFieldValue("newPassword")
-                      ? Promise.resolve()
-                      : Promise.reject(new Error("Passwords do not match!"));
-                  },
-                }),
-              ]}
-            >
-              <Input.Password placeholder="Confirm new password" />
-            </Form.Item>
-
-            <Form.Item>
-              <Button type="primary" htmlType="submit" block>
-                Change Password
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
       </Drawer>
+
+      {/* Change Password Modal */}
+      <Modal
+        title="Change Password"
+        open={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+        width={window.innerWidth < 768 ? "90%" : 500}
+      >
+        <Form layout="vertical" onFinish={handleChangePassword}>
+          <Form.Item
+            name="NIC"
+            label="NIC"
+            rules={[{ required: true, message: "Please enter your NIC!" }]}
+          >
+            <Input placeholder="Enter your NIC" />
+          </Form.Item>
+
+          <Form.Item
+            name="oldPassword"
+            label="Current Password"
+            rules={[{ required: true, message: "Please enter your current password!" }]}
+          >
+            <Input.Password placeholder="Enter current password" />
+          </Form.Item>
+
+          <Form.Item
+            name="newPassword"
+            label="New Password"
+            rules={[
+              { required: true, message: "Please enter a new password!" },
+              { min: 6, message: "Password must be at least 6 characters!" },
+            ]}
+          >
+            <Input.Password placeholder="Enter new password" />
+          </Form.Item>
+
+          <Form.Item
+            name="confirmPassword"
+            label="Confirm New Password"
+            dependencies={["newPassword"]}
+            rules={[
+              { required: true, message: "Please confirm your new password!" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  return value && value === getFieldValue("newPassword")
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Passwords do not match!"));
+                },
+              }),
+            ]}
+          >
+            <Input.Password placeholder="Confirm new password" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block loading={loading}>
+              Change Password
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   );
 };

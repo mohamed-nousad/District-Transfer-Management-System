@@ -18,7 +18,7 @@ exports.createDependence = async (req, res) => {
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
 
-  // Check if NIC already exists
+  // Check if NIC already exists   
   const existingDependentNIC = await UserDependence.findOne({
     dependentNIC: req.body.dependentNIC,
   });
