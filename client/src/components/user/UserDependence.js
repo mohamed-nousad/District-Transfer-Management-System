@@ -11,6 +11,7 @@ import {
   Input,
   Checkbox,
   Modal,
+  Popconfirm,
 } from "antd";
 import moment from "moment";
 
@@ -22,10 +23,8 @@ const Dependence = ({ user }) => {
   const [dependences, setDependences] = useState([]);
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
-
-  const currentProgressValue = user.progressValue || 0; // Default to 0 if no value exists
-
-  // Removed the unused variable `currentProgressValue`
+  const [editingDependence, setEditingDependence] = useState(null); // New state for editing
+  
   const fetchDependences = useCallback(async () => {
     try {
       setLoading(true);
@@ -36,9 +35,7 @@ const Dependence = ({ user }) => {
       );
       setDependences(response.data || []);
     } catch (error) {
-      message.error(
-        error.response?.data?.error || "Failed to fetch dependences"
-      );
+      message.error(error.response?.data?.error || "Failed to fetch dependences");
     } finally {
       setLoading(false);
     }
@@ -46,28 +43,32 @@ const Dependence = ({ user }) => {
 
   useEffect(() => {
     fetchDependences();
-  }, [fetchDependences]);
+  }, []);
 
   const handleConfirm = async () => {
     setConfirmVisible(false);
     UpdateProgressValue();
   };
 
-  const UpdateProgressValue = async () => {
-    try {
-      setLoading(true);
-      const updatedData = { progressValue: currentProgressValue + 15 };
+  const UpdateProgressValue = () => {
+    let collection = "userdependences";
 
-      // Send the update request to backend
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/user/user/${user._id}`,
-        updatedData
-      );
-      message.success(response.data.message || "Profile updated successfully");
-    } catch (error) {
-      message.error(error.response?.data?.error || error);
-    } finally {
-      setLoading(false);
+    if (user) {
+      axios
+        .put(
+          `${process.env.REACT_APP_API_URL}/user/user/progress/${user._id}`,
+          { collection: collection }
+        )
+        .then((response) => {
+          message.success(response.data.message || "Progress updated successfully");
+        })
+        .catch((error) => {
+          const errorMessage =
+            error.response && error.response.data && error.response.data.error
+              ? error.response.data.error
+              : "Failed to update progress"; 
+          message.error(errorMessage);
+        });
     }
   };
 
@@ -75,21 +76,68 @@ const Dependence = ({ user }) => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/user/dependence`,
-        { ...values, userId: user._id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      message.success(response.data.message || "Dependence added successfully");
+      
+      if (editingDependence) {
+        // If editing, update the dependence
+        const response = await axios.put(
+          `${process.env.REACT_APP_API_URL}/user/dependence/${editingDependence._id}`,
+          { ...values, userId: user._id },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        message.success(response.data.message || "Dependence updated successfully");
+      } else {
+        // If adding new dependence
+        const response = await axios.post(
+          `${process.env.REACT_APP_API_URL}/user/dependence`,
+          { ...values, userId: user._id },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        message.success(response.data.message || "Dependence added successfully");
+      }
       form.resetFields();
+      setEditingDependence(null); // Clear editing state after saving
       fetchDependences();
     } catch (error) {
       message.error(
-        error.response?.data?.errors[0]?.msg ||
-          error.response?.data?.error ||
-          "Failed. Try again."
+        error.response?.data?.errors?.[0]?.msg ||
+        error.response?.data?.error ||
+        "Failed. Try again."
       );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const editDependence = (dependence) => {
+    form.setFieldsValue({
+      dependentName: dependence.dependentName,
+      dependentRelationship: dependence.dependentRelationship,
+      dependentNIC: dependence.dependentNIC,
+      workplace: dependence.workplace,
+      gender: dependence.gender,
+      dependent_DOB: moment(dependence.dependent_DOB),
+      school: dependence.school,
+      city: dependence.city,
+      postalcode: dependence.postalcode,
+    });
+    setEditingDependence(dependence); // Set the dependence for editing
+  };
+
+  const deleteDependence = async (id) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/user/dependence/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Remove the deleted item from the state immediately
+      setDependences((prev) => prev.filter((item) => item._id !== id));
+
+      message.success("Dependence deleted successfully");
+    } catch (error) {
+      message.error(error.response?.data?.error || "Failed to delete dependence");
     } finally {
       setLoading(false);
     }
@@ -133,6 +181,23 @@ const Dependence = ({ user }) => {
     },
     { title: "City", dataIndex: "city", key: "city" },
     { title: "Postalcode", dataIndex: "postalcode", key: "postalcode" },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <>
+          <Button onClick={() => editDependence(record)} className="btn bg-blue-500 text-white" style={{ marginRight: 8 }}>Edit</Button>
+          <Popconfirm
+            title="Are you sure you want to delete this dependent?"
+            onConfirm={() => deleteDependence(record._id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button className="btn bg-red-500 text-white">Delete</Button>
+          </Popconfirm>
+        </>
+      ),
+    },
   ];
 
   return (

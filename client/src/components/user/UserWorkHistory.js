@@ -11,6 +11,7 @@ import {
   Input,
   Checkbox,
   Modal,
+  Popconfirm,
 } from "antd";
 import moment from "moment";
 
@@ -22,10 +23,10 @@ const UserWorkHistory = ({ user }) => {
   const [workhistories, setWorkhistories] = useState([]);
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [currentWorkHistory, setCurrentWorkHistory] = useState(null);
 
-  const currentProgressValue = user.progressValue || 0; // Default to 0 if no value exists
-
-  // Fetch work histories with useCallback
+  // Fetch work histories
   const fetchWorkHistories = useCallback(async () => {
     try {
       setLoading(true);
@@ -42,32 +43,30 @@ const UserWorkHistory = ({ user }) => {
     } finally {
       setLoading(false);
     }
-  }, [user._id]); // Add user._id to the dependency array
+  }, [user._id]);
 
   useEffect(() => {
     fetchWorkHistories();
-  }, [fetchWorkHistories]); // Include fetchWorkHistories in the dependency array
+  }, [fetchWorkHistories]);
 
   const handleConfirm = async () => {
     setConfirmVisible(false);
-    UpdateProgressValue();
+    updateProgressValue();
   };
 
-  const UpdateProgressValue = async () => {
+  const updateProgressValue = async () => {
     try {
-      setLoading(true);
-      const updatedData = { progressValue: currentProgressValue + 15 };
-
-      // Send the update request to the backend
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/user/user/${user._id}`,
-        updatedData
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/user/user/progress/${user._id}`,
+        { collection: "userworkhistories" },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      message.success(response.data.message || "Profile updated successfully");
+      message.success("Progress updated successfully");
     } catch (error) {
-      message.error(error.response?.data?.error || error);
-    } finally {
-      setLoading(false);
+      message.error(
+        error.response?.data?.error || "Failed to update progress"
+      );
     }
   };
 
@@ -75,18 +74,29 @@ const UserWorkHistory = ({ user }) => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/user/workhistory`,
-        { ...values, userId: user._id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      message.success(response.data.message || "Work history added successfully");
+      if (editMode && currentWorkHistory) {
+        await axios.put(
+          `${process.env.REACT_APP_API_URL}/user/workhistory/${currentWorkHistory._id}`,
+          { ...values, userId: user._id },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        message.success("Work history updated successfully");
+      } else {
+        await axios.post(
+          `${process.env.REACT_APP_API_URL}/user/workhistory`,
+          { ...values, userId: user._id },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        message.success("Work history added successfully");
+      }
       form.resetFields();
-      fetchWorkHistories(); // Refresh the table after adding
+      setEditMode(false);
+      setCurrentWorkHistory(null);
+      fetchWorkHistories();
     } catch (error) {
       message.error(
         error.response?.data?.error ||
-          error.response?.data?.errors[0]?.msg ||
+          error.response?.data?.errors?.[0]?.msg ||
           "Failed. Try again"
       );
     } finally {
@@ -94,7 +104,68 @@ const UserWorkHistory = ({ user }) => {
     }
   };
 
+  const deleteWorkHistory = async (id) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/user/workhistory/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Update state immediately after successful deletion
+      setWorkhistories((prev) => prev.filter((item) => item._id !== id));
+  
+      message.success("Work history deleted successfully");
+    } catch (error) {
+      message.error(
+        error.response?.data?.error || "Failed to delete work history"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (record) => {
+    form.setFieldsValue({
+      workplace: record.workplace,
+      workplace_type: record.workplace_type,
+      workplace_city: record.workplace_city,
+      workplace_postalcode: record.workplace_postalcode,
+      designation: record.designation,
+      start_date: moment(record.start_date),
+      end_date: moment(record.end_date),
+    });
+    setEditMode(true);
+    setCurrentWorkHistory(record);
+  };
+
   const columns = [
+    {
+      title: "Workplace Name",
+      dataIndex: "workplace",
+      key: "workplace",
+    },
+    {
+      title: "Workplace Type",
+      dataIndex: "workplace_type",
+      key: "workplace_type",
+    },
+    {
+      title: "Workplace City",
+      dataIndex: "workplace_city",
+      key: "workplace_city",
+    },
+    {
+      title: "Workplace Postal Code",
+      dataIndex: "workplace_postalcode",
+      key: "workplace_postalcode",
+    },
+    {
+      title: "Designation",
+      dataIndex: "designation",
+      key: "designation",
+    },
     {
       title: "Start Date",
       dataIndex: "start_date",
@@ -108,35 +179,40 @@ const UserWorkHistory = ({ user }) => {
       render: (text) => moment(text).format("YYYY-MM-DD"),
     },
     {
-      title: "Workplace Type",
-      dataIndex: "workplace_type",
-      key: "workplace_type",
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <>
+          <Button
+            className="btn bg-blue-500 text-white"
+            onClick={() => handleEdit(record)}
+          >
+            Edit
+          </Button>
+          <Popconfirm
+            title="Are you sure you want to delete this work history?"
+            onConfirm={() => deleteWorkHistory(record._id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button className="btn bg-red-500 text-white">Delete</Button>
+          </Popconfirm>
+        </>
+      ),
     },
-    {
-      title: "Workplace City",
-      dataIndex: "workplace_city",
-      key: "workplace_city",
-    },
-    {
-      title: "Workplace Postalcode",
-      dataIndex: "workplace_postalcode",
-      key: "workplace_postalcode",
-    },
-    { title: "Designation", dataIndex: "designation", key: "designation" },
   ];
 
   return (
     <div style={{ maxWidth: 1200, margin: "auto", padding: 30 }}>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
-          {/* Render form fields conditionally based on checkboxChecked */}
           {!checkboxChecked && (
             <>
               <Form.Item
                 label="Workplace Name"
                 name="workplace"
                 style={{ flex: "1 1 48%" }}
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: "This field is required" }]}
               >
                 <Input />
               </Form.Item>
@@ -145,10 +221,12 @@ const UserWorkHistory = ({ user }) => {
                 label="Workplace Type"
                 name="workplace_type"
                 style={{ flex: "1 1 48%" }}
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: "This field is required" }]}
               >
                 <Select>
-                  <Option value="District Secretariat">District Secretariat</Option>
+                  <Option value="District Secretariat">
+                    District Secretariat
+                  </Option>
                   <Option value="Divisional Secretariat">
                     Divisional Secretariat
                   </Option>
@@ -162,7 +240,7 @@ const UserWorkHistory = ({ user }) => {
                 label="Workplace City"
                 name="workplace_city"
                 style={{ flex: "1 1 48%" }}
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: "This field is required" }]}
               >
                 <Input />
               </Form.Item>
@@ -171,7 +249,7 @@ const UserWorkHistory = ({ user }) => {
                 label="Workplace Postal Code"
                 name="workplace_postalcode"
                 style={{ flex: "1 1 48%" }}
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: "This field is required" }]}
               >
                 <Input />
               </Form.Item>
@@ -180,7 +258,7 @@ const UserWorkHistory = ({ user }) => {
                 label="Designation"
                 name="designation"
                 style={{ flex: "1 1 48%" }}
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: "This field is required" }]}
               >
                 <Input />
               </Form.Item>
@@ -189,7 +267,7 @@ const UserWorkHistory = ({ user }) => {
                 label="Start Date"
                 name="start_date"
                 style={{ flex: "1 1 48%" }}
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: "This field is required" }]}
               >
                 <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
               </Form.Item>
@@ -198,7 +276,7 @@ const UserWorkHistory = ({ user }) => {
                 label="End Date"
                 name="end_date"
                 style={{ flex: "1 1 48%" }}
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: "This field is required" }]}
               >
                 <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
               </Form.Item>
@@ -222,13 +300,8 @@ const UserWorkHistory = ({ user }) => {
             {loading ? <Spin /> : "Confirm"}
           </Button>
         ) : (
-          <Button
-            type="primary"
-            onClick={form.submit}
-            block
-            disabled={loading}
-          >
-            {loading ? <Spin /> : "Save"}
+          <Button type="primary" onClick={form.submit} block disabled={loading}>
+            {loading ? <Spin /> : editMode ? "Update" : "Save"}
           </Button>
         )}
       </Form>
@@ -246,7 +319,7 @@ const UserWorkHistory = ({ user }) => {
       <Table
         dataSource={workhistories}
         columns={columns}
-        rowKey="id"
+        rowKey="_id"
         loading={loading}
         scroll={{ x: "max-content" }}
       />

@@ -10,6 +10,7 @@ import {
   Table,
   Checkbox,
   Modal,
+  Popconfirm,
 } from "antd";
 import moment from "moment";
 
@@ -22,13 +23,9 @@ const UserMedicalCondition = ({ user }) => {
   const [conditions, setConditions] = useState([]);
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const [editingCondition, setEditingCondition] = useState(null); // Track condition being edited
 
-  const currentProgressValue = user.progressValue || 0; // Default to 0 if no value exists
-
-  useEffect(() => {
-    fetchMedicalConditions();
-  }, []);
-
+  // Fetching medical conditions for the user
   const fetchMedicalConditions = async () => {
     try {
       setLoading(true);
@@ -47,26 +44,58 @@ const UserMedicalCondition = ({ user }) => {
     }
   };
 
+  useEffect(() => {
+    fetchMedicalConditions();
+  }, []);
+
+  const deleteMedicalCondition = async (id) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/user/medicalcondition/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Update state immediately after successful deletion
+      setConditions((prev) => prev.filter((item) => item._id !== id));
+  
+      message.success("Medical condition deleted successfully");
+    } catch (error) {
+      message.error(
+        error.response?.data?.error || "Failed to delete medical condition"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleConfirm = async () => {
     setConfirmVisible(false);
     UpdateProgressValue();
   };
 
-  const UpdateProgressValue = async () => {
-    try {
-      setLoading(true);
-      const updatedData = { progressValue: currentProgressValue + 15 };
+  const UpdateProgressValue = () => {
+    let collection = "usermedicalconditions";
 
-      // Send the update request to backend
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/user/user/${user._id}`,
-        updatedData
-      );
-      message.success(response.data.message || "Profile updated successfully");
-    } catch (error) {
-      message.error(error.response?.data?.error || error);
-    } finally {
-      setLoading(false);
+    if (user) {
+      axios
+        .put(
+          `${process.env.REACT_APP_API_URL}/user/user/progress/${user._id}`,
+          { collection: collection } // Pass the collection name dynamically
+        )
+        .then((response) => {
+          message.success(
+            response.data.message || "Progress updated successfully"
+          );
+        })
+        .catch((error) => {
+          const errorMessage =
+            error.response && error.response.data && error.response.data.error
+              ? error.response.data.error
+              : "Failed to update progress";
+          message.error(errorMessage);
+        });
     }
   };
 
@@ -74,16 +103,25 @@ const UserMedicalCondition = ({ user }) => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/user/medicalcondition`,
-        { ...values, userId: user._id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const url = editingCondition
+        ? `${process.env.REACT_APP_API_URL}/user/medicalcondition/${editingCondition._id}`
+        : `${process.env.REACT_APP_API_URL}/user/medicalcondition`;
+
+      const method = editingCondition ? "put" : "post";
+      
+      const response = await axios({
+        method,
+        url,
+        data: { ...values, userId: user._id },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       message.success(
-        response.data.message || "Medical condition added successfully"
+        response.data.message || "Medical condition saved successfully"
       );
       form.resetFields();
-      fetchMedicalConditions(); // Refresh the table after adding
+      setEditingCondition(null); // Reset the editing condition after saving
+      fetchMedicalConditions(); // Refresh the table after saving
     } catch (error) {
       message.error(
         error.response?.data?.error ||
@@ -114,7 +152,43 @@ const UserMedicalCondition = ({ user }) => {
       key: "createdAt",
       render: (text) => moment(text).format("YYYY-MM-DD"),
     },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <div>
+          <Button
+            className="btn bg-blue-500 text-white"
+            onClick={() => setEditingCondition(record)} // Set the condition being edited
+          >
+            Edit
+          </Button>
+          <Popconfirm
+            title="Are you sure you want to delete this disease?"
+            onConfirm={() => deleteMedicalCondition(record._id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button className="btn bg-red-500 text-white" style={{ marginLeft: 8 }}>
+              Delete
+            </Button>
+          </Popconfirm>
+        </div>
+      ),
+    },
   ];
+
+  // Prepopulate the form if editing a condition
+  useEffect(() => {
+    if (editingCondition) {
+      form.setFieldsValue({
+        type: editingCondition.type,
+        notes: editingCondition.notes,
+      });
+    } else {
+      form.resetFields();
+    }
+  }, [editingCondition, form]);
 
   return (
     <div style={{ maxWidth: 1200, margin: "auto", padding: 30 }}>
@@ -144,10 +218,7 @@ const UserMedicalCondition = ({ user }) => {
               <Form.Item
                 label="Notes"
                 name="notes"
-                rules={[
-                  { required: true, message: "This field is required" },
-                  { max: 300, message: "Maximum length is 300 characters" },
-                ]}
+                rules={[{ required: true, message: "This field is required" }]}
               >
                 <TextArea placeholder="Enter your notes (Max 300 characters)" />
               </Form.Item>
@@ -199,7 +270,6 @@ const UserMedicalCondition = ({ user }) => {
         loading={loading}
         scroll={{ x: "max-content" }}
       />
-      {user.progressValue}
     </div>
   );
 };
