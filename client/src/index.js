@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import PerformanceTest from "./Test"; // Import performance test
+// import PerformanceTest from "./Test"; // Import performance test
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

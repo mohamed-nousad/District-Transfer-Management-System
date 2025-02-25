@@ -42,7 +42,6 @@ const UserDependenceSchema = new mongoose.Schema(
     },
     postalcode: {
       type: String,
-      required: [true, "Postal code is required"], // Custom message
     },
   },
   { timestamps: true }

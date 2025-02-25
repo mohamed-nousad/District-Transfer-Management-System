@@ -85,7 +85,12 @@ const Register = () => {
                 name="NIC"
                 rules={[{ required: true, message: "Required" }]}
               >
-                <Input />
+                <Input
+                  style={{ textTransform: "uppercase" }} // Show letters in uppercase
+                  onChange={(e) =>
+                    (e.target.value = e.target.value.toUpperCase())
+                  } // Change value to uppercase
+                />
               </Form.Item>
             </Col>
           </Row>

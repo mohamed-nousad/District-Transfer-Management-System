@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Form, Input, Button, Select, DatePicker, message, Spin } from "antd";
 import moment from "moment";
+import UpdateProfile from "../../pages/UpdateProfile";
+import GPStracking from "./GPStracking";
 
 const { Option } = Select;
 
@@ -10,6 +12,7 @@ const UserProfile = ({ userData }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -62,6 +65,8 @@ const UserProfile = ({ userData }) => {
     }
   };
 
+  <UpdateProfile showMap={showMap} />;
+
   if (loading)
     return (
       <div
@@ -84,6 +89,8 @@ const UserProfile = ({ userData }) => {
     return <h2 style={{ color: "red", textAlign: "center" }}>{error}</h2>;
   return (
     <div style={{ maxWidth: 1200, margin: "auto", padding: 30 }}>
+          <GPStracking/>
+
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
           <Form.Item
@@ -281,9 +288,27 @@ const UserProfile = ({ userData }) => {
             </Select>
           </Form.Item>
         </div>
-        <Button type="primary" htmlType="submit" block>
-          Update
-        </Button>
+
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            margin: "20px 0",
+            width: "auto",
+          }}
+        >
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{
+              width: "auto", // Allows button to adjust its width based on content
+              padding: "10px 20px", // Adjusts padding
+              margin: "0", // Adjusts margin
+            }}
+          >
+            Update
+          </Button>
+        </div>
       </Form>
     </div>
   );

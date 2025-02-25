@@ -10,6 +10,7 @@ import {
   Table,
   Checkbox,
   Modal,
+  DatePicker
 } from "antd";
 import moment from "moment";
 const { Option } = Select;
@@ -66,6 +67,7 @@ const UserDisability = ({ user }) => {
       setLoading(false);
     }
   };
+  
   const handleConfirm = async () => {
     setConfirmVisible(false);
     UpdateProgressValue();
@@ -96,7 +98,6 @@ const UserDisability = ({ user }) => {
     }
   };
 
-
   const columns = [
     {
       title: "Type",
@@ -121,6 +122,7 @@ const UserDisability = ({ user }) => {
       render: (text) => text || "N/A",
     },
   ];
+  const howManyYears = Form.useWatch("since_birth", form);
 
   return (
     <div style={{ maxWidth: 1200, margin: "auto", padding: 30 }}>
@@ -164,21 +166,16 @@ const UserDisability = ({ user }) => {
                   <Option value="false">No</Option>
                 </Select>
               </Form.Item>
-
-              {form.getFieldValue("since_birth") === "false" && (
+              {howManyYears === "false" && (
                 <Form.Item
-                  label="Number of years"
-                  name="how_many_years"
+                label="Number of years"
+                name="how_many_years"
                   style={{ flex: "1 1 48%" }}
                   rules={[
-                    { required: true, message: "This field is required" },
-                    {
-                      pattern: /^[0-9]+$/,
-                      message: "Only numbers are allowed",
-                    },
+                    { required: true, message: "Treatment date is required" },
                   ]}
                 >
-                  <Input />
+                  <Input style={{ width: "100%" }} />
                 </Form.Item>
               )}
             </>

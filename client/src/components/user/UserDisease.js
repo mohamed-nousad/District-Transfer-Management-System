@@ -9,6 +9,8 @@ import {
   Table,
   Checkbox,
   Modal,
+  DatePicker,
+  Popconfirm,
 } from "antd";
 import moment from "moment";
 const { Option } = Select;
@@ -17,10 +19,10 @@ const UserDisease = ({ user }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [diseases, setDiseases] = useState([]);
-
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
 
+  // Fetch diseases for the user
   const fetchDiseases = async () => {
     try {
       setLoading(true);
@@ -41,13 +43,14 @@ const UserDisease = ({ user }) => {
     fetchDiseases();
   }, []);
 
+  // Handle form submission
   const onFinish = async (values) => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/user/disease`,
-        { ...values, userId: user._id }, // Include userId
+        { ...values, userId: user._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       message.success(response.data.message || "Disease added successfully");
@@ -63,6 +66,25 @@ const UserDisease = ({ user }) => {
       setLoading(false);
     }
   };
+
+  // Handle disease deletion
+  const deleteDisease = async (diseaseId) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(
+        `${process.env.REACT_APP_API_URL}/user/disease/${diseaseId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      message.success(response.data.message || "Disease deleted successfully");
+      fetchDiseases(); // Refresh the diseases list
+    } catch (error) {
+      message.error(error.response?.data?.error || "Failed to delete disease");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleConfirm = async () => {
     setConfirmVisible(false);
     UpdateProgressValue();
@@ -70,12 +92,11 @@ const UserDisease = ({ user }) => {
 
   const UpdateProgressValue = () => {
     let collection = "userdiseases";
-
     if (user) {
       axios
         .put(
           `${process.env.REACT_APP_API_URL}/user/user/progress/${user._id}`,
-          { collection: collection } // Pass the collection name dynamically
+          { collection: collection }
         )
         .then((response) => {
           message.success(
@@ -83,17 +104,14 @@ const UserDisease = ({ user }) => {
           );
         })
         .catch((error) => {
-          // Check if the error response has data and error message
           const errorMessage =
-            error.response && error.response.data && error.response.data.error
-              ? error.response.data.error
-              : "Failed to update progress"; // Default message
+            error.response?.data?.error || "Failed to update progress";
           message.error(errorMessage);
         });
     }
   };
 
-
+  // Columns for the diseases table
   const columns = [
     {
       title: "Type",
@@ -112,7 +130,22 @@ const UserDisease = ({ user }) => {
       key: "treatment_date",
       render: (text) => (text ? moment(text).format("YYYY-MM-DD") : "N/A"),
     },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <Popconfirm
+          title="Are you sure you want to delete this disease?"
+          onConfirm={() => deleteDisease(record._id)} // Pass disease ID to delete
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button className="btn bg-red-500 text-white">Delete</Button>
+        </Popconfirm>
+      ),
+    },
   ];
+  const takingTreatment = Form.useWatch("are_you_taking_treatment", form);
 
   return (
     <div style={{ maxWidth: 1200, margin: "auto", padding: 30 }}>
@@ -147,6 +180,19 @@ const UserDisease = ({ user }) => {
                   <Option value="true">Yes</Option>
                 </Select>
               </Form.Item>
+
+              {takingTreatment === "true" && (
+                <Form.Item
+                  label="Treatment Date"
+                  name="treatment_date"
+                  style={{ flex: "1 1 48%" }}
+                  rules={[
+                    { required: true, message: "Treatment date is required" },
+                  ]}
+                >
+                  <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+                </Form.Item>
+              )}
             </>
           )}
         </div>
@@ -186,7 +232,7 @@ const UserDisease = ({ user }) => {
       <Table
         dataSource={diseases}
         columns={columns}
-        rowKey="id"
+        rowKey="_id" // Ensure rowKey is set to the unique ID field
         loading={loading}
         scroll={{ x: "max-content" }}
       />
